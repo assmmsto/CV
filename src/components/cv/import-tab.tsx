@@ -12,6 +12,7 @@ import type { Lang, CVData } from "@/lib/cv/types";
 export function ImportTab({ lang }: { lang: Lang }) {
   const applyImported = useCVStore((s) => s.applyImported);
   const importState = useCVStore((s) => s.importState);
+  const setUiTab = useCVStore((s) => s.setUiTab);
   const data = useCVStore((s) => s.data);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<ParseResult | null>(null);
@@ -55,6 +56,8 @@ export function ImportTab({ lang }: { lang: Lang }) {
     setResult(null);
     setRawText("");
     setPasted("");
+    // The 10 versions are generated from the imported data — jump to the export hub.
+    setUiTab("export");
   };
 
   const extractPasted = () => {
@@ -84,6 +87,7 @@ export function ImportTab({ lang }: { lang: Lang }) {
         if (!payload?.personal) throw new Error("bad");
         importState({ data: { ...payload, experience: payload.experience ?? [], education: payload.education ?? [], skills: payload.skills ?? [], languages: payload.languages ?? [], certifications: payload.certifications ?? [], projects: payload.projects ?? [], customSections: payload.customSections ?? [] } });
         toast({ title: dict.imported[lang] });
+        setUiTab("export");
       } catch {
         toast({ title: dict.importFailed[lang], variant: "destructive" });
       }

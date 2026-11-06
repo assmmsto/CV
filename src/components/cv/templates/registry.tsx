@@ -1,5 +1,3 @@
-"use client";
-
 import { TemplateProps, hasSection } from "./shared";
 import { AtsClassic, AtsModern, Executive, MinimalPro } from "./single-col";
 import { ModernSidebar, CompactPro } from "./sidebar";

@@ -1,5 +1,3 @@
-"use client";
-
 import { BiText, CVData, Lang } from "@/lib/cv/types";
 import { levelLabel, slabel } from "@/lib/cv/i18n";
 import type { CSSProperties, ReactNode } from "react";
@@ -12,10 +10,16 @@ export interface TemplateProps {
   font: "modern" | "classic" | "mixed";
 }
 
+/**
+ * Font stacks. The 'Noto Sans Arabic' / 'Noto Naskh Arabic' families are
+ * embedded (@font-face) inside the server-rendered export HTML so Arabic text
+ * always renders with a professional shaped font in the generated PDFs.
+ * On user devices that lack them they are simply skipped (same look as before).
+ */
 export const FONT_STACKS: Record<"modern" | "classic" | "mixed", string> = {
-  modern: "Arial, 'Helvetica Neue', Helvetica, sans-serif",
-  classic: "'Times New Roman', Times, Georgia, serif",
-  mixed: "Georgia, 'Times New Roman', Times, serif",
+  modern: "Arial, 'Helvetica Neue', Helvetica, 'Noto Sans Arabic', sans-serif",
+  classic: "'Times New Roman', Times, Georgia, 'Noto Naskh Arabic', serif",
+  mixed: "Georgia, 'Times New Roman', Times, 'Noto Naskh Arabic', serif",
 };
 
 /** Pick the text in the requested language with graceful fallback. */

@@ -19,6 +19,38 @@ export const dict = {
   tabDesign: { ar: "القوالب", en: "Design" },
   tabPreview: { ar: "المعاينة", en: "Preview" },
   tabImport: { ar: "استيراد", en: "Import" },
+  tabExport: { ar: "النسخ الجاهزة", en: "Ready Versions" },
+
+  // Export hub
+  exportTitle: { ar: "النسخ الجاهزة للتحميل", en: "Ready-to-download versions" },
+  exportIntro: {
+    ar: "تُولَّد النسخ العشر تلقائياً من بياناتك الحالية (المدخلة أو المستوردة) — حمّل نسخة واحدة أو الكل بضغطة واحدة.",
+    en: "All 10 versions are generated automatically from your current data (entered or imported) — download one or all with one click.",
+  },
+  exportAutoNote: {
+    ar: "كل نسخة PDF نصية قابلة للتحديد ومتوافقة مع أنظمة الفرز الآلي (ATS) ومنصات التوظيف.",
+    en: "Every PDF has selectable, ATS-parseable text compatible with tracking systems and job platforms.",
+  },
+  downloadAllZip: { ar: "تحميل النسخ العشر (ZIP)", en: "Download all 10 (ZIP)" },
+  downloadAllHint: {
+    ar: "ملف واحد مضغوط يحتوي النسخ العشر كاملة",
+    en: "One compressed file containing all 10 versions",
+  },
+  downloadOne: { ar: "تحميل PDF", en: "Download PDF" },
+  generatingOne: { ar: "جاري توليد النسخة…", en: "Generating version…" },
+  generatingAll: { ar: "جاري توليد النسخ العشر…", en: "Generating all 10 versions…" },
+  generatedOne: { ar: "تم تحميل النسخة بنجاح", en: "Version downloaded successfully" },
+  generatedAll: { ar: "تم توليد النسخ العشر وتحميلها", en: "All 10 versions generated & downloaded" },
+  exportFailed: {
+    ar: "تعذر توليد PDF — حاول مرة أخرى أو استخدم الطباعة من تبويب المعاينة.",
+    en: "Could not generate the PDF — retry or use Print from the Preview tab.",
+  },
+  exportEmpty: {
+    ar: "أدخل بياناتك في تبويب «البيانات» أو ارفع سيرتك من تبويب «استيراد» لتوليد النسخ.",
+    en: "Fill your data in the Data tab or upload a CV in Import to generate the versions.",
+  },
+  exportEmptyCta: { ar: "تعبئة نموذج تجريبي", en: "Load sample data" },
+  versionsCount: { ar: "نسخ متوافقة", en: "compatible versions" },
 
   // Sections
   secPersonal: { ar: "المعلومات الشخصية", en: "Personal Information" },

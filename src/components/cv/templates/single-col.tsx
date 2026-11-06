@@ -1,5 +1,3 @@
-"use client";
-
 import { TemplateProps, pick, dateRange, Bullets, ContactLine, CustomSections, FONT_STACKS, hasSection, ProjectsList, CertsList } from "./shared";
 import { slabel } from "@/lib/cv/i18n";
 import { CSSProperties } from "react";

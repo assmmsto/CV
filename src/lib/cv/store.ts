@@ -19,6 +19,8 @@ import {
 import { sampleCV } from "./sample";
 
 interface Actions {
+  uiTab: string;
+  setUiTab: (t: string) => void;
   setUiLang: (l: Lang) => void;
   setCvLang: (l: Lang) => void;
   setTemplate: (id: string) => void;
@@ -135,7 +137,9 @@ export const useCVStore = create<CVStore>()(
       accent: "#0f172a",
       showPhoto: false,
       fontChoice: "modern",
+      uiTab: "data",
 
+      setUiTab: (uiTab) => set({ uiTab }),
       setUiLang: (uiLang) => set({ uiLang }),
       setCvLang: (cvLang) => set({ cvLang }),
       setTemplate: (templateId) => set({ templateId }),

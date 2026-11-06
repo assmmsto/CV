@@ -4,21 +4,66 @@ import { useCVStore, completeness } from "@/lib/cv/store";
 import { dict } from "@/lib/cv/i18n";
 import { CvSheet } from "./cv-sheet";
 import { Button, Progress, Badge } from "@/components/ui";
-import { Download, ZoomIn, ZoomOut, Printer, ShieldCheck } from "lucide-react";
+import { Download, ZoomIn, ZoomOut, Printer, ShieldCheck, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { getTemplate } from "./templates/registry";
+import { toast } from "@/hooks/use-toast";
 import type { Lang } from "@/lib/cv/types";
 
 export function PreviewTab({ lang }: { lang: Lang }) {
   const [zoom, setZoom] = useState(() =>
     typeof window !== "undefined" && window.innerWidth < 640 ? 0.45 : 0.85
   );
+  const [busy, setBusy] = useState(false);
   const data = useCVStore((s) => s.data);
   const templateId = useCVStore((s) => s.templateId);
   const cvLang = useCVStore((s) => s.cvLang);
   const setCvLang = useCVStore((s) => s.setCvLang);
+  const accent = useCVStore((s) => s.accent);
+  const showPhoto = useCVStore((s) => s.showPhoto);
+  const fontChoice = useCVStore((s) => s.fontChoice);
   const pct = completeness(data);
   const meta = getTemplate(templateId);
+
+  /** Real server-side PDF generation; falls back to browser print. */
+  const downloadPdf = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const res = await fetch("/api/export/pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data,
+          lang: cvLang,
+          templates: [templateId],
+          accent,
+          showPhoto,
+          font: fontChoice,
+        }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      const blob = await res.blob();
+      const disposition = res.headers.get("Content-Disposition") ?? "";
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = meta.name.en
+        ? `${data.personal.fullName.en || data.personal.fullName.ar || "CV"} - ${meta.name.en}.pdf`
+        : "CV.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      toast({ title: dict.generatedOne[lang] });
+    } catch {
+      toast({ title: dict.exportFailed[lang], variant: "destructive" });
+      // Offline / API unavailable — the print pipeline still produces a clean PDF.
+      window.print();
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -41,8 +86,9 @@ export function PreviewTab({ lang }: { lang: Lang }) {
 
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="hidden sm:inline-flex">{meta.name[lang]} · ATS {meta.ats}%</Badge>
-          <Button onClick={() => window.print()} className="gap-2 bg-amber-600 hover:bg-amber-700 text-white">
-            <Printer className="h-4 w-4" />{dict.downloadPdf[lang]}
+          <Button onClick={downloadPdf} disabled={busy} className="gap-2 bg-amber-600 hover:bg-amber-700 text-white">
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            {busy ? dict.generatingOne[lang] : dict.downloadPdf[lang]}
           </Button>
         </div>
       </div>
@@ -57,8 +103,11 @@ export function PreviewTab({ lang }: { lang: Lang }) {
           </div>
           <Progress value={pct} className="h-2" />
         </div>
-        <Button variant="outline" size="sm" onClick={() => window.print()} className="gap-1.5 hidden sm:inline-flex">
+        <Button variant="outline" size="sm" onClick={downloadPdf} disabled={busy} className="gap-1.5 hidden sm:inline-flex">
           <Download className="h-3.5 w-3.5" />PDF
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => window.print()} className="gap-1.5 hidden md:inline-flex" aria-label={lang === "ar" ? "طباعة" : "Print"}>
+          <Printer className="h-3.5 w-3.5" />
         </Button>
       </div>
 

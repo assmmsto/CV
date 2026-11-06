@@ -8,10 +8,11 @@ import { ExperienceSection, EducationSection, SkillsSection, LanguagesSection, C
 import { DesignTab } from "@/components/cv/design-tab";
 import { PreviewTab } from "@/components/cv/preview-tab";
 import { ImportTab } from "@/components/cv/import-tab";
+import { ExportTab } from "@/components/cv/export-tab";
 import { CvSheet, PrintPortal } from "@/components/cv/cv-sheet";
 import { PwaRegister, InstallButton, OfflineBadge } from "@/components/cv/pwa";
 import { Tabs, TabsContent, TabsList, TabsTrigger, Button, Progress, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui";
-import { FileText, Palette, Eye, FileUp, FileCheck2, Sparkles, Trash2, ScrollText } from "lucide-react";
+import { FileText, Palette, Eye, FileUp, FileCheck2, Sparkles, Trash2, ScrollText, PackageCheck } from "lucide-react";
 import type { Lang } from "@/lib/cv/types";
 
 const emptySubscribe = () => () => {};
@@ -28,6 +29,8 @@ export default function Home() {
   const setUiLang = useCVStore((s) => s.setUiLang);
   const setCvLang = useCVStore((s) => s.setCvLang);
   const data = useCVStore((s) => s.data);
+  const uiTab = useCVStore((s) => s.uiTab);
+  const setUiTab = useCVStore((s) => s.setUiTab);
   const loadSample = useCVStore((s) => s.loadSample);
   const clearAll = useCVStore((s) => s.clearAll);
   const mounted = useMounted();
@@ -94,11 +97,12 @@ export default function Home() {
 
       {/* Main */}
       <main className="mx-auto w-full max-w-7xl flex-1 px-3 sm:px-4 py-4">
-        <Tabs defaultValue="data" dir={lang === "ar" ? "rtl" : "ltr"}>
+        <Tabs value={uiTab} onValueChange={setUiTab} dir={lang === "ar" ? "rtl" : "ltr"}>
           <TabsList className="w-full justify-start overflow-x-auto h-auto flex-nowrap gap-1 bg-card border mb-4">
             <TabsTrigger value="data" className="gap-1.5 text-sm"><FileText className="h-4 w-4" /><span className="hidden xs:inline">{dict.tabEdit[lang]}</span></TabsTrigger>
             <TabsTrigger value="design" className="gap-1.5 text-sm"><Palette className="h-4 w-4" />{dict.tabDesign[lang]}</TabsTrigger>
             <TabsTrigger value="preview" className="gap-1.5 text-sm"><Eye className="h-4 w-4" />{dict.tabPreview[lang]}</TabsTrigger>
+            <TabsTrigger value="export" className="gap-1.5 text-sm font-bold"><PackageCheck className="h-4 w-4" />{dict.tabExport[lang]}</TabsTrigger>
             <TabsTrigger value="import" className="gap-1.5 text-sm"><FileUp className="h-4 w-4" />{dict.tabImport[lang]}</TabsTrigger>
           </TabsList>
 
@@ -172,6 +176,11 @@ export default function Home() {
           {/* ---- PREVIEW ---- */}
           <TabsContent value="preview" className="mt-0">
             <PreviewTab lang={lang} />
+          </TabsContent>
+
+          {/* ---- EXPORT (10 ready versions) ---- */}
+          <TabsContent value="export" className="mt-0">
+            <ExportTab lang={lang} />
           </TabsContent>
 
           {/* ---- IMPORT ---- */}

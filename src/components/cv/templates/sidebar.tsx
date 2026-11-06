@@ -1,5 +1,3 @@
-"use client";
-
 import { TemplateProps, pick, dateRange, Bullets, ContactItem, contactItems, CustomSections, FONT_STACKS, SkillBars, LanguageList, ProjectsList, CertsList, MiniIcon, hasSection } from "./shared";
 import { slabel, levelLabel } from "@/lib/cv/i18n";
 import { CSSProperties } from "react";
