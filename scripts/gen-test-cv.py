@@ -1,0 +1,52 @@
+"""Generate a test CV PDF to verify the app's import/parse feature."""
+from fpdf import FPDF
+
+pdf = FPDF(format="A4")
+pdf.set_auto_page_break(True, margin=15)
+pdf.add_page()
+pdf.set_font("Helvetica", "B", 18)
+pdf.cell(0, 10, "Sara Mahmoud", ln=1)
+pdf.set_font("Helvetica", "", 12)
+pdf.cell(0, 8, "Software Engineer", ln=1)
+pdf.cell(0, 8, "sara.mahmoud@example.com | +963 944 555 123", ln=1)
+pdf.cell(0, 8, "Damascus, Syria | linkedin.com/in/sara-m", ln=1)
+pdf.ln(4)
+
+pdf.set_font("Helvetica", "B", 13)
+pdf.cell(0, 8, "PROFESSIONAL SUMMARY", ln=1)
+pdf.set_font("Helvetica", "", 11)
+pdf.multi_cell(0, 6, "Backend engineer with 6 years of experience building scalable APIs and cloud systems.")
+pdf.ln(3)
+
+pdf.set_font("Helvetica", "B", 13)
+pdf.cell(0, 8, "WORK EXPERIENCE", ln=1)
+pdf.set_font("Helvetica", "B", 11)
+pdf.cell(0, 7, "Backend Team Lead at TechLab, 01/2021 - Present", ln=1)
+pdf.set_font("Helvetica", "", 10)
+pdf.multi_cell(0, 6, "- Led a team of 5 engineers building microservices\n- Reduced API latency by 40%\n- Designed CI/CD pipelines")
+pdf.ln(2)
+pdf.set_font("Helvetica", "B", 11)
+pdf.cell(0, 7, "Software Engineer at SoftHouse, 03/2018 - 12/2020", ln=1)
+pdf.set_font("Helvetica", "", 10)
+pdf.multi_cell(0, 6, "- Built REST APIs for e-commerce platform\n- Maintained legacy PHP systems")
+pdf.ln(3)
+
+pdf.set_font("Helvetica", "B", 13)
+pdf.cell(0, 8, "EDUCATION", ln=1)
+pdf.set_font("Helvetica", "", 11)
+pdf.cell(0, 7, "Bachelor of Computer Science at Damascus University, 2014 - 2018", ln=1)
+pdf.ln(3)
+
+pdf.set_font("Helvetica", "B", 13)
+pdf.cell(0, 8, "SKILLS", ln=1)
+pdf.set_font("Helvetica", "", 11)
+pdf.multi_cell(0, 6, "Node.js, PostgreSQL, Docker, AWS, Redis, Python")
+pdf.ln(3)
+
+pdf.set_font("Helvetica", "B", 13)
+pdf.cell(0, 8, "LANGUAGES", ln=1)
+pdf.set_font("Helvetica", "", 11)
+pdf.multi_cell(0, 6, "Arabic (Native), English (Advanced)")
+
+pdf.output("/tmp/test-cv.pdf")
+print("test PDF created")

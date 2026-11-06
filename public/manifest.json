@@ -1,0 +1,53 @@
+{
+  "name": "استوديو السيرة الذاتية — CV Studio",
+  "short_name": "CV Studio",
+  "description": "منشئ سيرة ذاتية احترافي ثنائي اللغة مع 10 قوالب متوافقة مع ATS — Professional bilingual CV builder",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "dir": "auto",
+  "lang": "ar",
+  "background_color": "#fafaf9",
+  "theme_color": "#1c1917",
+  "categories": ["productivity", "business", "education"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "بياناتي — My data",
+      "url": "/?tab=data",
+      "description": "تعديل بيانات السيرة الذاتية"
+    },
+    {
+      "name": "المعاينة — Preview",
+      "url": "/?tab=preview",
+      "description": "معاينة وتصدير PDF"
+    }
+  ]
+}
