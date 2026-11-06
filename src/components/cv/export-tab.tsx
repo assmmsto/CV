@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TEMPLATES } from "./templates/registry";
 import { TemplateRenderer } from "./templates/registry";
 import { useCVStore, completeness } from "@/lib/cv/store";
 import { dict } from "@/lib/cv/i18n";
 import { Button, Badge, Card, CardContent } from "@/components/ui";
 import { toast } from "@/hooks/use-toast";
-import { FileDown, FolderArchive, ShieldCheck, Sparkles, Loader2, AlertTriangle, FileCheck2 } from "lucide-react";
+import { FileDown, FolderArchive, ShieldCheck, Sparkles, Loader2, AlertTriangle, FileCheck2, Printer } from "lucide-react";
 import type { Lang } from "@/lib/cv/types";
 
 type Body = {
@@ -18,6 +18,76 @@ type Body = {
   showPhoto: boolean;
   font: "modern" | "classic" | "mixed";
 };
+
+/** Map export error codes to clear bilingual messages. */
+function exportErrorMessage(code: string, lang: Lang): string {
+  switch (code) {
+    case "no-runner":
+    case "worker-spawn-failed":
+      return dict.exportErrorNoRunner[lang];
+    case "chromium-not-found":
+      return dict.exportErrorChromium[lang];
+    case "export-timeout":
+      return dict.exportErrorTimeout[lang];
+    default:
+      return dict.exportErrorGeneric[lang];
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Browser print fallback — works with zero server dependencies        */
+/* (templates use inline styles, so serialized markup is self-styled)  */
+/* ------------------------------------------------------------------ */
+
+const PRINT_CSS = `
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #ffffff; }
+body {
+  font-family: 'Noto Sans Arabic', 'Segoe UI', Tahoma, Arial, sans-serif;
+  color: #1a1a1a;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.cv-sheet {
+  width: 210mm;
+  min-height: 297mm;
+  background: #ffffff;
+  margin: 0 auto;
+  position: relative;
+  page-break-after: always;
+  break-after: page;
+}
+.cv-sheet:last-child { page-break-after: auto; break-after: auto; }
+.cv-sheet li { break-inside: avoid; page-break-inside: avoid; }
+.cv-sheet h1, .cv-sheet h2, .cv-sheet h3 { break-after: avoid; page-break-after: avoid; }
+`;
+
+function printViaBrowser(sheetsHTML: string, lang: Lang) {
+  const dir = lang === "ar" ? "rtl" : "ltr";
+  const frame = document.createElement("iframe");
+  frame.setAttribute("aria-hidden", "true");
+  frame.style.cssText = "position:fixed;right:0;bottom:0;width:1px;height:1px;opacity:0;border:0;";
+  document.body.appendChild(frame);
+  const doc = frame.contentWindow?.document;
+  if (!doc) return;
+  doc.open();
+  doc.write(
+    `<!doctype html><html lang="${lang}" dir="${dir}"><head><meta charset="utf-8"/>` +
+      `<title>CV</title><style>${PRINT_CSS}</style></head><body>${sheetsHTML}</body></html>`
+  );
+  doc.close();
+  const win = frame.contentWindow!;
+  setTimeout(() => {
+    try {
+      win.focus();
+      win.print();
+    } catch {
+      /* ignore */
+    }
+    setTimeout(() => frame.remove(), 60_000);
+  }, 700);
+}
 
 async function postExport(body: Body): Promise<{ blob: Blob; disposition: string }> {
   const res = await fetch("/api/export/pdf", {
@@ -77,6 +147,43 @@ export function ExportTab({ lang }: { lang: Lang }) {
 
   const [busyAll, setBusyAll] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [engineReady, setEngineReady] = useState<boolean | null>(null);
+  const [printTarget, setPrintTarget] = useState<{ mode: "one" | "all"; tid?: string } | null>(null);
+
+  /* engine diagnostics (once) — drives the amber banner */
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/export/diag")
+      .then((r) => r.json())
+      .then((j) => {
+        if (alive) setEngineReady(Boolean(j?.engineReady));
+      })
+      .catch(() => {
+        if (alive) setEngineReady(true); // assume ok if diag unreachable
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  /* print fallback: wait for the offscreen render, then print */
+  useEffect(() => {
+    if (!printTarget) return;
+    const t = setTimeout(() => {
+      const stage = document.getElementById("cv-print-stage");
+      const sheets = stage ? Array.from(stage.querySelectorAll<HTMLElement>(":scope > .cv-print-sheet")) : [];
+      const inner = sheets.map((s) => `<div class="cv-sheet">${s.innerHTML}</div>`).join("\n");
+      if (inner) {
+        printViaBrowser(inner, cvLang);
+        toast({ title: dict.exportFallbackTitle[lang], description: dict.exportFallbackHint[lang] });
+      } else {
+        toast({ title: dict.exportErrorGeneric[lang], variant: "destructive" });
+      }
+      setPrintTarget(null);
+    }, 400);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [printTarget]);
 
   const pct = completeness(data);
   const hasData = (data.personal.fullName.ar || data.personal.fullName.en) && pct >= 25;
@@ -99,7 +206,8 @@ export function ExportTab({ lang }: { lang: Lang }) {
       toast({ title: dict.generatedAll[lang] });
     } catch (e) {
       console.error("export all failed:", e);
-      toast({ title: dict.exportFailed[lang], variant: "destructive" });
+      toast({ title: dict.exportFailed[lang], description: exportErrorMessage((e as Error).message, lang), variant: "destructive" });
+      setPrintTarget({ mode: "all" }); // browser print fallback
     } finally {
       setBusyAll(false);
     }
@@ -115,7 +223,8 @@ export function ExportTab({ lang }: { lang: Lang }) {
       toast({ title: dict.generatedOne[lang], description: meta?.name[lang] });
     } catch (e) {
       console.error("export one failed:", e);
-      toast({ title: dict.exportFailed[lang], variant: "destructive" });
+      toast({ title: dict.exportFailed[lang], description: exportErrorMessage((e as Error).message, lang), variant: "destructive" });
+      setPrintTarget({ mode: "one", tid }); // browser print fallback
     } finally {
       setBusyId(null);
     }
@@ -142,6 +251,34 @@ export function ExportTab({ lang }: { lang: Lang }) {
   /* ---------- export hub ---------- */
   return (
     <div className="space-y-4">
+      {/* engine warning (only when the native PDF engine is missing) */}
+      {engineReady === false && (
+        <div className="flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 p-3 text-[13px] leading-relaxed text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            {dict.exportErrorNoRunner[lang]} {dict.exportEngineHint[lang]}
+          </span>
+        </div>
+      )}
+
+      {/* offscreen print stage for the browser fallback */}
+      {printTarget && (
+        <div id="cv-print-stage" aria-hidden className="hidden">
+          {(printTarget.mode === "all" ? TEMPLATES.map((t) => t.id) : [printTarget.tid!]).map((id) => (
+            <div key={id} className="cv-print-sheet" dir={cvLang === "ar" ? "rtl" : "ltr"}>
+              <TemplateRenderer
+                templateId={id}
+                data={data}
+                lang={cvLang}
+                accent={accent}
+                showPhoto={showPhoto}
+                font={fontChoice}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* action bar */}
       <div className="rounded-2xl border bg-gradient-to-br from-stone-900 to-stone-800 dark:from-card dark:to-card text-white dark:text-card-foreground p-4 sm:p-5 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -168,6 +305,14 @@ export function ExportTab({ lang }: { lang: Lang }) {
             >
               {busyAll ? <Loader2 className="h-4 w-4 animate-spin" /> : <FolderArchive className="h-5 w-5" />}
               {busyAll ? dict.generatingAll[lang] : dict.downloadAllZip[lang]}
+            </button>
+            <button
+              onClick={() => setPrintTarget({ mode: "all" })}
+              disabled={busyAll || busyId !== null}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-2 text-xs font-bold text-white transition hover:bg-white/20 disabled:opacity-60 dark:border-border dark:bg-muted/50 dark:text-card-foreground"
+            >
+              <Printer className="h-4 w-4" />
+              {lang === "ar" ? "طباعة احتياطية (كل النسخ)" : "Print fallback (all versions)"}
             </button>
 
             {/* CV language */}

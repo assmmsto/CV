@@ -12,13 +12,13 @@
  */
 
 import { exit } from "node:process";
-import { writeFileSync, readFileSync, existsSync, readdirSync } from "node:fs";
+import { writeFileSync, readFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
-import os from "node:os";
 
-// --- resolve imports relative to project root (bun handles TS/TSX natively) ---
+// --- resolve imports relative to project root (bun/tsx handle TS/TSX natively) ---
 import { renderTemplateHTML } from "../src/lib/cv/export-html";
 import { exportBaseName } from "../src/lib/cv/export-names";
+import { findChromium } from "../src/lib/cv/engine-detect";
 import { getTemplate, TEMPLATES } from "../src/components/cv/templates/registry";
 import type { CVData, Lang } from "../src/lib/cv/types";
 
@@ -31,32 +31,6 @@ interface Payload {
   font?: "modern" | "classic" | "mixed";
 }
 
-/* ---------------- chromium discovery ---------------- */
-
-function findChromium(): string | null {
-  const candidates: string[] = [];
-  if (process.env.CHROME_PATH) candidates.push(process.env.CHROME_PATH);
-  const root = path.join(os.homedir(), ".cache", "ms-playwright");
-  if (existsSync(root)) {
-    try {
-      for (const dir of readdirSync(root)) {
-        if (/^chromium(-\d+)?$/.test(dir)) {
-          candidates.push(path.join(root, dir, "chrome-linux64", "chrome"));
-          candidates.push(path.join(root, dir, "chrome-linux", "chrome"));
-        }
-        if (/^chromium_headless_shell(-\d+)?$/.test(dir)) {
-          candidates.push(
-            path.join(root, dir, "chrome-headless-shell-linux64", "chrome-headless-shell")
-          );
-        }
-      }
-    } catch {
-      /* ignore */
-    }
-  }
-  return candidates.find((c) => existsSync(c)) ?? null;
-}
-
 /* ---------------- main ---------------- */
 
 async function main() {
@@ -67,14 +41,22 @@ async function main() {
   }
 
   const payload: Payload = JSON.parse(readFileSync(payloadPath, "utf8"));
+  mkdirSync(outDir, { recursive: true });
   const ids =
     payload.templates === "all"
       ? TEMPLATES.map((t) => t.id)
       : TEMPLATES.map((t) => t.id).filter((id) => payload.templates.includes(id));
   if (ids.length === 0) throw new Error("no-valid-template");
 
-  const executablePath = findChromium();
-  if (!executablePath) throw new Error("chromium-not-found");
+  const chrome = findChromium();
+  if (!chrome.found || !chrome.path) {
+    console.error(
+      "chromium-checked-dirs:",
+      chrome.checkedDirs.join(", ") || "(none)"
+    );
+    throw new Error(`chromium-not-found. ${chrome.hint}`);
+  }
+  const executablePath = chrome.path;
 
   const { chromium } = await import("playwright-core");
   const browser = await chromium.launch({

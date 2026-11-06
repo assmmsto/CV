@@ -14,6 +14,7 @@ import path from "path";
 import os from "os";
 import JSZip from "jszip";
 import { exportBaseName } from "./export-names";
+import { runnerCandidates, type RunnerInfo } from "./engine-detect";
 import { TEMPLATES } from "@/components/cv/templates/registry";
 import type { CVData, Lang } from "./types";
 
@@ -48,7 +49,7 @@ interface ManifestEntry {
   file: string;
 }
 
-const BUN_BIN = process.env.BUN_BIN || "/usr/local/bin/bun";
+const WORKER_TIMEOUT_MS = 180_000;
 
 /**
  * The standalone Next server (`.next/standalone/server.js`) chdirs into the
@@ -81,7 +82,49 @@ function findProjectRoot(): string {
 const PROJECT_ROOT = findProjectRoot();
 const WORKER = path.join(PROJECT_ROOT, "scripts", "pdf-worker.ts");
 
-/** Run the bun PDF worker and return the generated files in memory. */
+/** Spawn the worker once with a given runner. Rejects with .missing=true when the runner binary is not usable. */
+function spawnWorkerOnce(
+  runner: RunnerInfo,
+  payloadPath: string,
+  outDir: string
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const q = (s: string) => (runner.useShell && /\s/.test(s) ? `"${s}"` : s);
+    const args = [...runner.argsPrefix, WORKER, payloadPath, outDir].map(q);
+    const child = spawn(runner.bin, args, {
+      cwd: PROJECT_ROOT,
+      shell: runner.useShell,
+      stdio: ["ignore", "ignore", "pipe"],
+      env: { ...process.env, NODE_ENV: process.env.NODE_ENV },
+    });
+    let stderr = "";
+    const started = Date.now();
+    child.stderr?.on("data", (d) => (stderr += String(d)));
+    const timer = setTimeout(() => {
+      child.kill("SIGKILL");
+      reject(new ExportError("export-timeout", `worker exceeded ${WORKER_TIMEOUT_MS / 1000}s`));
+    }, WORKER_TIMEOUT_MS);
+    child.on("error", (err) => {
+      clearTimeout(timer);
+      // ENOENT / bad command → runner missing, try the next candidate.
+      (err as Error & { missing?: boolean }).missing = true;
+      reject(err);
+    });
+    child.on("close", (code) => {
+      clearTimeout(timer);
+      if (code === 0) return resolve();
+      // Fast, silent, non-zero exit → likely a missing shim (Windows .cmd etc.)
+      if (!stderr && Date.now() - started < 2000 && (code === 1 || code === 127 || code === 9009)) {
+        const e = new Error(`runner exited ${code} immediately`);
+        (e as Error & { missing?: boolean }).missing = true;
+        return reject(e);
+      }
+      reject(new ExportError("worker-failed", stderr.slice(-800) || `exit ${code}`));
+    });
+  });
+}
+
+/** Run the PDF worker (bun first, then tsx) and return the generated files. */
 export async function runExport(opts: RunOptions): Promise<GeneratedFile[]> {
   const ids = opts.templates === "all" ? ALL_IDS : ALL_IDS.filter((id) => opts.templates.includes(id));
   if (ids.length === 0) throw new ExportError("no-valid-template");
@@ -93,28 +136,35 @@ export async function runExport(opts: RunOptions): Promise<GeneratedFile[]> {
     const outDir = path.join(tmpDir, "out");
     await (await import("fs/promises")).mkdir(outDir, { recursive: true });
 
-    await new Promise<void>((resolve, reject) => {
-      const child = spawn(BUN_BIN, [WORKER, payloadPath, outDir], {
-        cwd: PROJECT_ROOT,
-        stdio: ["ignore", "ignore", "pipe"],
-        env: { ...process.env, NODE_ENV: process.env.NODE_ENV },
-      });
-      let stderr = "";
-      child.stderr?.on("data", (d) => (stderr += String(d)));
-      const timer = setTimeout(() => {
-        child.kill("SIGKILL");
-        reject(new ExportError("export-timeout", "worker exceeded 120s"));
-      }, 120_000);
-      child.on("error", (err) => {
-        clearTimeout(timer);
-        reject(new ExportError("worker-spawn-failed", err.message));
-      });
-      child.on("close", (code) => {
-        clearTimeout(timer);
-        if (code === 0) resolve();
-        else reject(new ExportError("worker-failed", stderr.slice(-500) || `exit ${code}`));
-      });
-    });
+    const candidates = runnerCandidates();
+    let lastRunnerMsg = "";
+    let spawned = false;
+    for (const runner of candidates) {
+      // skip candidates whose binary path does not exist (bare PATH commands always try)
+      const isBare = !runner.bin.includes("/") && !runner.bin.includes("\\");
+      if (!isBare && !existsSync(runner.bin)) {
+        lastRunnerMsg = `${runner.kind}:${runner.bin} not found`;
+        continue;
+      }
+      try {
+        await spawnWorkerOnce(runner, payloadPath, outDir);
+        spawned = true;
+        break;
+      } catch (err) {
+        if ((err as { missing?: boolean }).missing) {
+          lastRunnerMsg = `${runner.kind}:${runner.bin} unusable (${(err as Error).message})`;
+          continue;
+        }
+        throw err;
+      }
+    }
+    if (!spawned) {
+      const hint = candidates[0]?.hint ?? "install bun or tsx";
+      throw new ExportError(
+        "no-runner",
+        `لم يتم العثور على محرك تشغيل (Bun/tsx). ${lastRunnerMsg}. الحل: ${hint}`
+      );
+    }
 
     const manifestRaw = await readFile(path.join(outDir, "manifest.json"), "utf8");
     const manifest: ManifestEntry[] = JSON.parse(manifestRaw);

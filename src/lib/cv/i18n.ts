@@ -42,8 +42,36 @@ export const dict = {
   generatedOne: { ar: "تم تحميل النسخة بنجاح", en: "Version downloaded successfully" },
   generatedAll: { ar: "تم توليد النسخ العشر وتحميلها", en: "All 10 versions generated & downloaded" },
   exportFailed: {
-    ar: "تعذر توليد PDF — حاول مرة أخرى أو استخدم الطباعة من تبويب المعاينة.",
-    en: "Could not generate the PDF — retry or use Print from the Preview tab.",
+    ar: "تعذر توليد PDF عبر المحرك — جاري فتح الطباعة الاحتياطية…",
+    en: "PDF engine failed — opening the print fallback…",
+  },
+  exportFallbackTitle: {
+    ar: "تم فتح نافذة الطباعة الاحتياطية",
+    en: "Print fallback window opened",
+  },
+  exportFallbackHint: {
+    ar: "اختر «حفظ كـ PDF» من نافذة الطباعة لحفظ السيرة كملف PDF.",
+    en: "Choose “Save as PDF” in the print dialog to save the CV as a PDF file.",
+  },
+  exportEngineHint: {
+    ar: "لتوليد PDF مباشرة على هذا الجهاز ثبّت Bun ثم أعد تشغيل التطبيق.",
+    en: "To generate PDFs natively on this machine, install Bun then restart the app.",
+  },
+  exportErrorNoRunner: {
+    ar: "محرك توليد PDF غير مثبت (يتطلب Bun أو tsx). استخدم الطباعة الاحتياطية بالأسفل أو ثبّت Bun.",
+    en: "PDF runner not installed (requires Bun or tsx). Use the print fallback below or install Bun.",
+  },
+  exportErrorChromium: {
+    ar: "متصفح Chromium/Chrome غير موجود لتوليد PDF. ثبّت Google Chrome أو شغّل: npx playwright-core install chromium",
+    en: "Chromium/Chrome not found for PDF generation. Install Google Chrome or run: npx playwright-core install chromium",
+  },
+  exportErrorTimeout: {
+    ar: "انتهت مهلة توليد PDF — حاول مجدداً أو استخدم الطباعة الاحتياطية.",
+    en: "PDF generation timed out — retry or use the print fallback.",
+  },
+  exportErrorGeneric: {
+    ar: "تعذر توليد PDF — استخدم الطباعة الاحتياطية أو أعد المحاولة.",
+    en: "Could not generate the PDF — use the print fallback or retry.",
   },
   exportEmpty: {
     ar: "أدخل بياناتك في تبويب «البيانات» أو ارفع سيرتك من تبويب «استيراد» لتوليد النسخ.",
