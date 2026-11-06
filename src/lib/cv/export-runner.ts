@@ -49,7 +49,37 @@ interface ManifestEntry {
 }
 
 const BUN_BIN = process.env.BUN_BIN || "/usr/local/bin/bun";
-const WORKER = path.join(process.cwd(), "scripts", "pdf-worker.ts");
+
+/**
+ * The standalone Next server (`.next/standalone/server.js`) chdirs into the
+ * standalone folder, where the traced `node_modules` lacks `react-dom/server.js`
+ * (the PDF worker imports it but is not part of the server bundle graph).
+ * Therefore always spawn the worker from the REAL project root — detected by
+ * walking up from cwd until a directory has the worker + templates + a full
+ * react-dom install.
+ */
+function findProjectRoot(): string {
+  const starts = [process.env.CV_PROJECT_ROOT, process.cwd()].filter(Boolean) as string[];
+  let relaxed: string | null = null;
+  for (const start of starts) {
+    let dir = path.resolve(start);
+    for (let i = 0; i < 6; i++) {
+      const hasWorker = existsSync(path.join(dir, "scripts", "pdf-worker.ts"));
+      const hasSrc = existsSync(path.join(dir, "src", "lib", "cv", "export-html.ts"));
+      const hasPkg = existsSync(path.join(dir, "package.json"));
+      const hasReactDom = existsSync(path.join(dir, "node_modules", "react-dom", "server.js"));
+      if (hasWorker && hasSrc && hasPkg && hasReactDom) return dir;
+      if (!relaxed && hasWorker && hasSrc && hasPkg) relaxed = dir;
+      const up = path.dirname(dir);
+      if (up === dir) break;
+      dir = up;
+    }
+  }
+  return relaxed ?? process.cwd();
+}
+
+const PROJECT_ROOT = findProjectRoot();
+const WORKER = path.join(PROJECT_ROOT, "scripts", "pdf-worker.ts");
 
 /** Run the bun PDF worker and return the generated files in memory. */
 export async function runExport(opts: RunOptions): Promise<GeneratedFile[]> {
@@ -65,7 +95,7 @@ export async function runExport(opts: RunOptions): Promise<GeneratedFile[]> {
 
     await new Promise<void>((resolve, reject) => {
       const child = spawn(BUN_BIN, [WORKER, payloadPath, outDir], {
-        cwd: process.cwd(),
+        cwd: PROJECT_ROOT,
         stdio: ["ignore", "ignore", "pipe"],
         env: { ...process.env, NODE_ENV: process.env.NODE_ENV },
       });

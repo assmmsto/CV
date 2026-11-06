@@ -57,10 +57,12 @@ export interface SkillItem {
   level: 1 | 2 | 3 | 4 | 5;
 }
 
+export type Level = "native" | "fluent" | "advanced" | "intermediate" | "basic";
+
 export interface LanguageItem {
   id: string;
   name: BiText;
-  level: "native" | "fluent" | "advanced" | "intermediate" | "basic";
+  level: Level;
 }
 
 export interface CertificationItem {
