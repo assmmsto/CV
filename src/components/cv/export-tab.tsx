@@ -63,20 +63,33 @@ body {
 .cv-sheet h1, .cv-sheet h2, .cv-sheet h3 { break-after: avoid; page-break-after: avoid; }
 `;
 
+declare global {
+  interface Window {
+    AndroidBridge?: { printHtml: (html: string) => void };
+  }
+}
+
 function printViaBrowser(sheetsHTML: string, lang: Lang) {
   const dir = lang === "ar" ? "rtl" : "ltr";
+  const doc = `<!doctype html><html lang="${lang}" dir="${dir}"><head><meta charset="utf-8"/>` +
+    `<title>CV</title><style>${PRINT_CSS}</style></head><body>${sheetsHTML}</body></html>`;
+
+  /* native Android print framework (APK) → “Save as PDF” in the system dialog */
+  if (typeof window !== "undefined" && window.AndroidBridge?.printHtml) {
+    window.AndroidBridge.printHtml(doc);
+    return;
+  }
+
+  /* desktop/mobile browser → hidden iframe + window.print() */
   const frame = document.createElement("iframe");
   frame.setAttribute("aria-hidden", "true");
   frame.style.cssText = "position:fixed;right:0;bottom:0;width:1px;height:1px;opacity:0;border:0;";
   document.body.appendChild(frame);
-  const doc = frame.contentWindow?.document;
-  if (!doc) return;
-  doc.open();
-  doc.write(
-    `<!doctype html><html lang="${lang}" dir="${dir}"><head><meta charset="utf-8"/>` +
-      `<title>CV</title><style>${PRINT_CSS}</style></head><body>${sheetsHTML}</body></html>`
-  );
-  doc.close();
+  const fdoc = frame.contentWindow?.document;
+  if (!fdoc) return;
+  fdoc.open();
+  fdoc.write(doc);
+  fdoc.close();
   const win = frame.contentWindow!;
   setTimeout(() => {
     try {

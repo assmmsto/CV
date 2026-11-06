@@ -60,3 +60,6 @@ db/*.db-journal
 /upload/
 /download/
 /tmp/
+
+out/
+android-project/assets/

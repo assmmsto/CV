@@ -106,3 +106,27 @@ scripts/
 
 Next.js 16 · React 19 · TypeScript · Tailwind CSS 4 · shadcn/ui · Zustand · Prisma (اختياري) ·
 JSZip · Playwright-core (Chromium) · bun — مع PWA كامل (manifest + service worker + offline).
+
+## 🤖 نسخة أندرويد APK | Android APK
+
+التطبيق متوفر كحزمة APK مستقلة تعمل **أونلاين وأوفلاين**:
+
+| الملف | الوصف |
+|---|---|
+| `docs/index.html` | صفحة ويب عربية لتحميل الـ APK (جاهزة لـ GitHub Pages) |
+| `docs/cv-studio.apk` | حزمة التطبيق الموقّعة (com.cvstudio.app v1.0.0) |
+| `download/cv-studio-release.keystore` | مفتاح التوقيع (كلمة السر: `CVstudio-2026-key`) — احتفظ به للتحديثات المستقبلية |
+
+**بناء APK من الصفر**:
+```bash
+npm run build:static   # أو: bash scripts/build-android-web.sh
+python3 scripts/gen-icons.py
+bash scripts/build-apk.sh   # يتطلب: Android build-tools + android-34 + JDK 21
+```
+
+**آلية العمل داخل APK**: الواجهة تعمل بالكامل أوفلاين من أصول التطبيق، وتوليد PDF
+يستخدم محرك الطباعة الأصلي في أندرويد (Save as PDF) — وعند توفر خادم التطبيق أونلاين
+يُستخدم محرك Bun+Chromium تلقائياً للحصول على نصوص ATS قابلة للتحديد.
+
+> ملاحظة: PDF المولّد أوفلاين عبر الطباعة الأصلية يحتوي نصاً قابلاً للتحديد أيضاً،
+> لكن المحرك الأونلاين يوفر تحكماً أدق بالخطوط العربية والتنسيق.

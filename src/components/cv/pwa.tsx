@@ -13,7 +13,12 @@ interface BeforeInstallPromptEvent extends Event {
 
 export function PwaRegister() {
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
+    // inside the Android APK (native WebView bridge) the service worker is
+    // unnecessary and can break asset loading — skip it
+    const inApk = typeof window !== "undefined" &&
+      (Boolean((window as { AndroidBridge?: unknown }).AndroidBridge) ||
+        window.location.protocol === "file:");
+    if ("serviceWorker" in navigator && !inApk) {
       const onLoad = () => {
         navigator.serviceWorker.register("/sw.js").catch(() => {});
       };
