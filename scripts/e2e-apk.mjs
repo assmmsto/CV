@@ -66,7 +66,8 @@ async function main() {
   await ctx.addInitScript(() => {
     window.__bridgeCalls = [];
     window.AndroidBridge = {
-      printHtml(html) { window.__bridgeCalls.push(String(html)); },
+      printHtml(html) { window.__bridgeCalls.push({ kind: "printHtml", html }); },
+      saveFile(name, mime, base64) { window.__bridgeCalls.push({ kind: "saveFile", name, mime, base64 }); },
     };
   });
   const page = await ctx.newPage();
@@ -85,25 +86,40 @@ async function main() {
   await allBtn.click();
   console.log("download-all clicked");
 
-  // 3) wait for the bridge call
-  await page.waitForFunction(() => (window.__bridgeCalls || []).length > 0, { timeout: 15000 });
+  // 3) wait for the bridge call — since v1.1.0 "download all" saves a real ZIP via saveFile
+  await page.waitForFunction(() => (window.__bridgeCalls || []).length > 0, { timeout: 240000 });
   const calls = await page.evaluate(() => window.__bridgeCalls);
-  const doc = calls[0];
-
-  const sheets = (doc.match(/class="cv-sheet"/g) || []).length;
-  const hasPageCSS = doc.includes("@page");
-  const hasArabic = /[\u0600-\u06FF]/.test(doc);
+  const call = calls[0];
 
   console.log("--- assertions ---");
-  console.log("bridge calls:", calls.length);
-  console.log("doc length:", doc.length);
-  console.log("cv-sheet count:", sheets, "(expect 10)");
-  console.log("has @page css:", hasPageCSS);
-  console.log("has arabic text:", hasArabic);
+  console.log("bridge calls:", calls.length, "| kinds:", calls.map((c) => c.kind).join(","));
+
+  // v1.2 behavior: direct ZIP save through saveFile — NO print fallback
+  let ok = false;
+  if (call.kind === "saveFile") {
+    const { name, mime, base64 } = call;
+    const buf = Buffer.from(base64, "base64");
+    const isZip = buf.subarray(0, 2).toString() === "PK";
+    console.log("saveFile name:", name);
+    console.log("mime:", mime, "| bytes:", buf.length, "| zip magic:", isZip);
+    if (isZip) {
+      const { writeFileSync, mkdirSync, rmSync } = await import("node:fs");
+      const { execSync } = await import("node:child_process");
+      writeFileSync("/tmp/apk-e2e.zip", buf);
+      rmSync("/tmp/apk-e2e-z", { recursive: true, force: true });
+      mkdirSync("/tmp/apk-e2e-z", { recursive: true });
+      execSync("cd /tmp/apk-e2e-z && unzip -q /tmp/apk-e2e.zip");
+      const pdfs = execSync("ls /tmp/apk-e2e-z | grep -c .pdf").toString().trim();
+      console.log("pdfs inside zip:", pdfs, "(expect 10)");
+      ok = pdfs === "10" && buf.length > 100000 && mime === "application/zip";
+    }
+  } else {
+    console.log("UNEXPECTED printHtml fallback — direct save missing!");
+  }
+
   const fatalErrors = errors.filter((e) => !e.includes("favicon") && !e.includes("/api/"));
   console.log("page errors (excl. api 404s):", fatalErrors.length ? fatalErrors.slice(0, 5) : "none");
-
-  const ok = calls.length === 1 && sheets === 10 && hasPageCSS && hasArabic && doc.length > 10000;
+  ok = ok && fatalErrors.length === 0;
   await browser.close();
   server.close();
   if (ok) { console.log("E2E-APK PASS"); process.exit(0); }
