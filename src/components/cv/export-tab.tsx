@@ -158,16 +158,26 @@ export function ExportTab({ lang }: { lang: Lang }) {
   const fontChoice = useCVStore((s) => s.fontChoice);
   const loadSample = useCVStore((s) => s.loadSample);
 
+  const inApk = typeof window !== "undefined" && Boolean(window.AndroidBridge?.printHtml);
+
   const [busyAll, setBusyAll] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [engineReady, setEngineReady] = useState<boolean | null>(null);
   const [printTarget, setPrintTarget] = useState<{ mode: "one" | "all"; tid?: string } | null>(null);
 
-  /* engine diagnostics (once) — drives the amber banner */
+  /* engine diagnostics (once) — drives the amber banner.
+     Inside the APK the native print engine is always available → never warn. */
   useEffect(() => {
+    if (inApk) {
+      setEngineReady(true);
+      return;
+    }
     let alive = true;
     fetch("/api/export/diag")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.json();
+      })
       .then((j) => {
         if (alive) setEngineReady(Boolean(j?.engineReady));
       })
@@ -193,6 +203,8 @@ export function ExportTab({ lang }: { lang: Lang }) {
         toast({ title: dict.exportErrorGeneric[lang], variant: "destructive" });
       }
       setPrintTarget(null);
+      setBusyAll(false);
+      setBusyId(null);
     }, 400);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -211,6 +223,13 @@ export function ExportTab({ lang }: { lang: Lang }) {
 
   const downloadAll = async () => {
     if (busyAll || busyId) return;
+    /* APK: go straight to the native print dialog — no server roundtrip */
+    if (inApk) {
+      setBusyAll(true);
+      toast({ title: dict.apkPreparing[lang] });
+      setPrintTarget({ mode: "all" });
+      return;
+    }
     setBusyAll(true);
     toast({ title: dict.generatingAll[lang], description: dict.exportAutoNote[lang] });
     try {
@@ -228,6 +247,13 @@ export function ExportTab({ lang }: { lang: Lang }) {
 
   const downloadOne = async (tid: string) => {
     if (busyAll || busyId) return;
+    /* APK: go straight to the native print dialog — no server roundtrip */
+    if (inApk) {
+      setBusyId(tid);
+      toast({ title: dict.apkPreparing[lang] });
+      setPrintTarget({ mode: "one", tid });
+      return;
+    }
     setBusyId(tid);
     try {
       const { blob, disposition } = await postExport({ ...bodyBase, templates: [tid] });

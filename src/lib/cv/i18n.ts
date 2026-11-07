@@ -53,6 +53,10 @@ export const dict = {
     ar: "اختر «حفظ كـ PDF» من نافذة الطباعة لحفظ السيرة كملف PDF.",
     en: "Choose “Save as PDF” in the print dialog to save the CV as a PDF file.",
   },
+  apkPreparing: {
+    ar: "جاري تجهيز نسخة PDF عبر نظام الطباعة…",
+    en: "Preparing the PDF via the system print dialog…",
+  },
   exportEngineHint: {
     ar: "لتوليد PDF مباشرة على هذا الجهاز ثبّت Bun ثم أعد تشغيل التطبيق.",
     en: "To generate PDFs natively on this machine, install Bun then restart the app.",

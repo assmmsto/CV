@@ -115,7 +115,7 @@ JSZip · Playwright-core (Chromium) · bun — مع PWA كامل (manifest + ser
 |---|---|
 | `docs/index.html` | صفحة ويب عربية لتحميل الـ APK (جاهزة لـ GitHub Pages) |
 | `docs/cv-studio.apk` | حزمة التطبيق الموقّعة (com.cvstudio.app v1.0.0) |
-| `download/cv-studio-release.keystore` | مفتاح التوقيع (كلمة السر: `CVstudio-2026-key`) — احتفظ به للتحديثات المستقبلية |
+|  `download/cv-studio-release.keystore` | مفتاح التوقيع (كلمة السر مخزنة لديك في مكان آمن — لا تنشرها أبداً) |
 
 **بناء APK من الصفر**:
 ```bash
