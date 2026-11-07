@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تحميل CV Studio 1.2.0 — APK موقّع + التحقق من البصمة</title>
+<meta name="description" content="حمّل تطبيق CV Studio لأندرويد (1.5 ميجا، أندرويد 7+) مع خطوات التثبيت وحل مشاكل التثبيت، وبصمة SHA-256 للتحقق من سلامة الملف.">
+<link rel="canonical" href="https://assmmsto.github.io/CV/download/">
+<meta name="theme-color" content="#0c0a09">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../img/icon-180.png">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CV Studio">
+<meta property="og:locale" content="ar_AR">
+<meta property="og:url" content="https://assmmsto.github.io/CV/download/">
+<meta property="og:title" content="تحميل CV Studio 1.2.0 — APK موقّع رقمياً">
+<meta property="og:description" content="التطبيق 1.5 ميجا فقط، أندرويد 7+، مع خطوات التثبيت والتحقق من بصمة SHA-256.">
+<meta property="og:image" content="https://assmmsto.github.io/CV/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://assmmsto.github.io/CV/img/og.png">
+
+<style>
+  :root{
+    --bg:#0c0a09; --bg-soft:#141110; --card:#1a1715; --card-2:#211d1a;
+    --line:#2c2723; --line-soft:#231f1c;
+    --text:#fafaf9; --muted:#a8a29e; --dim:#78716c;
+    --amber:#f59e0b; --amber-2:#fbbf24; --amber-ink:#1c1917;
+    --green:#34d399; --radius:18px; --maxw:1000px;
+    --font:'Segoe UI',Tahoma,'Noto Sans Arabic','Noto Kufi Arabic',system-ui,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  img{max-width:100%;height:auto;display:block}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+  .container{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+  .icon{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:700;font-size:1rem;padding:14px 26px;border-radius:14px;transition:transform .18s,box-shadow .18s,border-color .18s,background .18s;white-space:nowrap}
+  .btn-primary{background:linear-gradient(180deg,#fbbf24,#f59e0b);color:var(--amber-ink);box-shadow:0 10px 28px -8px rgba(245,158,11,.55)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 34px -10px rgba(245,158,11,.65)}
+  .btn-ghost{border:1.5px solid var(--line);color:var(--text);background:rgba(255,255,255,.02)}
+  .btn-ghost:hover{border-color:#4a423b;background:rgba(255,255,255,.05)}
+  .btn-sm{padding:10px 18px;font-size:.92rem;border-radius:11px}
+
+  header{position:sticky;top:0;z-index:60;background:rgba(12,10,9,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:.25s}
+  header.scrolled{border-bottom-color:var(--line);background:rgba(12,10,9,.95)}
+  .nav{display:flex;align-items:center;gap:14px;height:68px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:1.02rem}
+  .brand img{width:36px;height:36px;border-radius:10px;border:1px solid #3a332c}
+  .brand small{display:block;font-size:.72rem;font-weight:500;color:var(--dim);line-height:1.1;margin-top:1px}
+  .nav-links{display:flex;gap:6px;margin-inline-start:auto}
+  .nav-links a{font-size:.92rem;color:var(--muted);padding:8px 12px;border-radius:9px;transition:.18s}
+  .nav-links a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+
+  .head{padding:52px 0 30px;position:relative;overflow:hidden}
+  .head::before{content:"";position:absolute;inset-inline-end:-200px;top:-360px;width:720px;height:720px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.13),transparent 62%);pointer-events:none}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.82rem;font-weight:700;color:var(--amber-2);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.26);padding:6px 14px;border-radius:999px;margin-bottom:18px}
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 3px rgba(245,158,11,.18)}
+  h1{font-size:clamp(1.8rem,3.6vw,2.6rem);line-height:1.3;font-weight:800;letter-spacing:-.4px}
+  .lede{color:var(--muted);margin-top:14px;max-width:600px}
+
+  .dl-card{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center;background:linear-gradient(150deg,rgba(245,158,11,.09),var(--card) 45%);border:1px solid rgba(245,158,11,.22);border-radius:22px;padding:26px 28px;margin-top:34px}
+  .dl-icon{width:76px;height:76px;border-radius:20px;overflow:hidden;border:1px solid #3d352d;box-shadow:0 14px 30px -12px rgba(0,0,0,.9)}
+  .dl-meta h2{font-size:1.3rem;font-weight:800;margin-bottom:6px}
+  .dl-meta p{font-size:.88rem;color:var(--muted)}
+  .dl-meta .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .badge{font-size:.74rem;font-weight:700;padding:4px 11px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:rgba(255,255,255,.03)}
+  .badge.ok{color:var(--green);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.1)}
+  .dl-actions{display:flex;flex-direction:column;gap:9px;min-width:220px}
+  .dl-actions .btn{width:100%}
+
+  section{padding:52px 0}
+  .sec-head{margin-bottom:26px}
+  .kicker{font-size:.78rem;font-weight:800;letter-spacing:.5px;color:var(--amber);text-transform:uppercase;margin-bottom:8px;display:block}
+  h2{font-size:clamp(1.35rem,2.4vw,1.8rem);font-weight:800;line-height:1.35;letter-spacing:-.3px}
+  .sec-head p{color:var(--muted);margin-top:10px;font-size:.94rem}
+
+  .steps-list{list-style:none;counter-reset:i;display:grid;gap:0}
+  .steps-list li{counter-increment:i;display:flex;gap:15px;padding:16px 0;border-bottom:1px solid var(--line-soft);font-size:.94rem;color:var(--muted)}
+  .steps-list li:last-child{border-bottom:0}
+  .steps-list li::before{content:counter(i);width:28px;height:28px;border-radius:9px;background:var(--card-2);border:1px solid var(--line);color:var(--amber);font-weight:800;font-size:.8rem;display:grid;place-items:center;flex:none;margin-top:2px}
+  .steps-list b{color:var(--text)}
+  .steps-list code{background:#241f1b;padding:2px 7px;border-radius:6px;font-family:ui-monospace,Consolas,monospace;font-size:.82rem;direction:ltr;display:inline-block}
+
+  .warn{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.24);border-radius:14px;padding:16px 18px;font-size:.88rem;color:#e7d3ac;display:flex;gap:11px;margin-top:20px}
+  .warn .icon{color:var(--amber);flex:none;margin-top:2px}
+  .warn b{color:#fbbf24}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .card h3{font-size:1rem;margin-bottom:10px;display:flex;align-items:center;gap:9px}
+  .card h3 .icon{color:var(--amber);width:18px;height:18px}
+  .card p{font-size:.88rem;color:var(--muted)}
+  .card p + p{margin-top:8px}
+
+  .specs{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:6px 20px 14px}
+  .spec-row{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line-soft);font-size:.86rem}
+  .spec-row:last-child{border-bottom:0}
+  .spec-row>span:first-child{color:var(--dim)}
+  .spec-row>span:last-child{color:var(--text);font-weight:600;text-align:end}
+  .hash{display:flex;align-items:center;gap:8px;justify-content:flex-end;max-width:60%}
+  .hash code{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;color:var(--muted);direction:ltr;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .copy{width:27px;height:27px;border-radius:7px;border:1px solid var(--line);display:grid;place-items:center;color:var(--dim);flex:none;transition:.18s}
+  .copy:hover{color:var(--amber);border-color:rgba(245,158,11,.4)}
+  .copy .icon{width:13px;height:13px}
+
+  .cmd{position:relative;background:#100d0c;border:1px solid var(--line);border-radius:11px;padding:13px 15px;margin-top:10px;direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:.8rem;color:#d6d3d1;overflow-x:auto;white-space:nowrap}
+  .cmd .p{color:var(--amber)}
+
+  .trouble{display:grid;gap:12px}
+  .trouble details{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:0 20px}
+  .trouble details[open]{border-color:#3d3530;background:var(--card-2)}
+  .trouble summary{cursor:pointer;list-style:none;padding:15px 0;font-weight:700;font-size:.93rem;display:flex;justify-content:space-between;gap:14px;align-items:center}
+  .trouble summary::-webkit-details-marker{display:none}
+  .trouble summary .icon{width:17px;height:17px;color:var(--dim);transition:transform .25s;flex:none}
+  .trouble details[open] summary .icon{transform:rotate(180deg);color:var(--amber)}
+  .trouble p{color:var(--muted);font-size:.88rem;padding:0 0 16px}
+  .trouble p + p{padding-top:0}
+
+  .note{font-size:.8rem;color:var(--dim);margin-top:12px;line-height:1.7}
+
+  footer{border-top:1px solid var(--line-soft);padding:34px 0 30px;margin-top:16px}
+  .foot{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
+  .foot-links{display:flex;flex-wrap:wrap;gap:18px;font-size:.85rem;color:var(--dim)}
+  .foot-links a:hover{color:var(--amber)}
+  .foot small{color:var(--dim);font-size:.78rem;display:block;margin-top:14px;text-align:center}
+
+  @media (max-width:820px){
+    .dl-card{grid-template-columns:1fr;text-align:center;padding:24px 20px}
+    .dl-icon{margin:0 auto}
+    .dl-meta .badges{justify-content:center}
+    .dl-actions{min-width:0;width:100%}
+    .grid2{grid-template-columns:1fr}
+    .nav-links{display:none}
+    .hash{max-width:52%}
+    section{padding:40px 0}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 21h16"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12.5 5 5L20 6.5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 9v5"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-term" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3"/><path d="M13 15h4"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+</svg>
+
+<header id="hdr">
+  <div class="container nav">
+    <a class="brand" href="../">
+      <img src="../img/icon-192.png" alt="شعار CV Studio" width="36" height="36">
+      <span>CV Studio<small>استوديو السيرة الذاتية</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="../">الرئيسية</a>
+      <a href="#verify">التحقق</a>
+      <a href="#trouble">المشاكل</a>
+      <a href="../app/">النسخة الويب</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="../cv-studio.apk" download style="margin-inline-start:auto">
+      <svg class="icon" width="16" height="16"><use href="#i-download"/></svg> تحميل مباشر
+    </a>
+  </div>
+</header>
+
+<main>
+<div class="container head">
+  <span class="eyebrow"><span class="dot"></span> الإصدار 1.2.0 — موقّع رقمياً</span>
+  <h1>تحميل CV Studio لأندرويد</h1>
+  <p class="lede">ملف APK واحد بحجم 1.5 ميجا، يعمل على أندرويد 7.0 فما فوق. لا يحتاج حساباً ولا اتصالاً بالإنترنت بعد التثبيت.</p>
+
+  <div class="dl-card">
+    <div class="dl-icon"><img src="../img/icon-192.png" alt="" width="76" height="76"></div>
+    <div class="dl-meta">
+      <h2>استوديو السيرة الذاتية</h2>
+      <p>الإصدار 1.2.0 • <span id="size">1.5 ميجا</span> • com.cvstudio.app</p>
+      <div class="badges">
+        <span class="badge ok">✓ موقّع رقمياً</span>
+        <span class="badge">أندرويد 7.0+</span>
+        <span class="badge">10 قوالب ATS</span>
+        <span class="badge">بدون أذونات حساسة</span>
+      </div>
+    </div>
+    <div class="dl-actions">
+      <a class="btn btn-primary" href="../cv-studio.apk" download>
+        <svg class="icon" width="18" height="18"><use href="#i-download"/></svg> تحميل APK
+      </a>
+      <a class="btn btn-ghost" href="../app/">
+        <svg class="icon" width="18" height="18"><use href="#i-globe"/></svg> النسخة الويب
+      </a>
+    </div>
+  </div>
+</div>
+
+<section style="padding-top:14px">
+  <div class="container">
+    <div class="sec-head">
+      <span class="kicker">خطوات التثبيت</span>
+      <h2>خمس خطوات… أقل من دقيقة</h2>
+    </div>
+    <ol class="steps-list">
+      <li><span><b>اضغط «تحميل APK»</b> وانتظر انتهاء التنزيل (1.5 ميجا).</span></li>
+      <li><span><b>افتح الملف</b> من شريط الإشعارات أو من مجلد <code>Download</code>.</span></li>
+      <li><span>إن ظهرت رسالة «<b>التثبيت من مصادر غير معروفة</b>»، اضغط «الإعدادات» ثم اسمح للتطبيق أو المتصفح الذي حمّلت منه فقط.</span></li>
+      <li><span><b>اضغط «تثبيت»</b>، ثم افتح «استوديو السيرة الذاتية» من قائمة التطبيقات.</span></li>
+      <li><span>داخل التطبيق: أدخل بياناتك ← تبويب «النسخ الجاهزة» ← حمّل أي قالب كـ PDF أو الكل في ملف مضغوط.</span></li>
+    </ol>
+
+    <div class="warn">
+      <svg class="icon" width="18" height="18"><use href="#i-alert"/></svg>
+      <div><b>تنبيه Google Play Protect:</b> قد يظهر «تطبيق غير موثوق» أو «تم حظر التطبيق لحماية جهازك». هذا طبيعي لأي تطبيق موقّع ذاتياً وموزّع خارج المتجر: اضغط «تفاصيل» ← «تثبيت على أي حال». التطبيق لا يجمع بيانات ولا يطلب أذونات حساسة.<br><b>مهم:</b> إذا سبق أن ثبّتَّ إصداراً قديماً، احذفه أولاً ثم ثبّت هذا الإصدار.</div>
+    </div>
+  </div>
+</section>
+
+<section id="verify" style="background:var(--bg-soft);border-block:1px solid var(--line-soft)">
+  <div class="container">
+    <div class="sec-head">
+      <span class="kicker">التحقق</span>
+      <h2>تأكّد أن الملف هو ملفنا فعلاً</h2>
+      <p>بصمة SHA-256 أدناه مطابقة للملف المنشور. قارنها بعد التنزيل — أي اختلاف يعني أن الملف تغيّر أثناء النقل.</p>
+    </div>
+
+    <div class="specs">
+      <div class="spec-row"><span>اسم الحزمة</span><span>com.cvstudio.app</span></div>
+      <div class="spec-row"><span>الإصدار</span><span>1.2.0 (versionCode 4)</span></div>
+      <div class="spec-row"><span>حجم الملف</span><span id="size2">1.5 ميجا</span></div>
+      <div class="spec-row"><span>أقل إصدار أندرويد</span><span>7.0 (API 24)</span></div>
+      <div class="spec-row"><span>الإصدار المستهدف</span><span>Android 14 (API 34)</span></div>
+      <div class="spec-row">
+        <span>بصمة شهادة التوقيع</span>
+        <span class="hash"><code>677330335e5df791525f5aa77358444b7671f9e64660896ff58209c14ee8ff67</code>
+        <button class="copy" data-copy="677330335e5df791525f5aa77358444b7671f9e64660896ff58209c14ee8ff67" aria-label="نسخ"><svg class="icon"><use href="#i-copy"/></svg></button></span>
+      </div>
+      <div class="spec-row">
+        <span>بصمة ملف APK</span>
+        <span class="hash"><code>463e806957465b1cb5f843e8aea62bb74d33e3ed0894c6e434722f2a93d5a92e</code>
+        <button class="copy" data-copy="463e806957465b1cb5f843e8aea62bb74d33e3ed0894c6e434722f2a93d5a92e" aria-label="نسخ"><svg class="icon"><use href="#i-copy"/></svg></button></span>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:18px">
+      <div class="card">
+        <h3><svg class="icon"><use href="#i-term"/></svg> على الكمبيوتر</h3>
+        <p>بعد تنزيل الملف، افتح الطرفية في مجلد التنزيلات ونفّذ:</p>
+        <div class="cmd"><span class="p">$</span> sha256sum cv-studio.apk</div>
+        <div class="cmd" style="margin-top:8px"><span class="p">PS&gt;</span> Get-FileHash cv-studio.apk -Algorithm SHA256</div>
+        <p style="margin-top:10px">قارن الناتج بالبصمة أعلاه — يجب أن يتطابق تماماً.</p>
+      </div>
+      <div class="card">
+        <h3><svg class="icon"><use href="#i-phone"/></svg> على الأندرويد</h3>
+        <p>ثبّت تطبيقاً مثل <b>Hash Droid</b> أو <b>Hash Checker</b>، اختر ملف APK، واختر خوارزمية SHA-256.</p>
+        <p>أو استخدم مدير ملفات يعرض البصمة (مثل MiXplorer) من خصائص الملف.</p>
+      </div>
+    </div>
+    <p class="note">لماذا هذا مهم؟ التطبيقات الموزّعة خارج المتاجر لا تمر بمراجعة Google، والتحقق من البصمة يضمن أن ما حمّلته هو بالضبط ما نشره المطوّر.</p>
+  </div>
+</section>
+
+<section id="trouble">
+  <div class="container">
+    <div class="sec-head">
+      <span class="kicker">حل المشاكل</span>
+      <h2>إن لم يكتمل التثبيت</h2>
+    </div>
+    <div class="trouble">
+      <details open>
+        <summary>يظهر «التطبيق غير مثبّت» أو «لم يتم تثبيت التطبيق» <svg class="icon"><use href="#i-chevron"/></svg></summary>
+        <p>السبب الأشيع وجود إصدار قديم بتوقيع مختلف. احذف الإصدار القديم من الإعدادات ← التطبيقات، ثم ثبّت الإصدار الجديد.</p>
+        <p>إن استمرت المشكلة، تحقّق من توفر مساحة كافية (20 ميجا تكفي) ومن أن الملف نُزّل بالكامل — قارن حجمه بالحجم المذكور أعلاه.</p>
+      </details>
+      <details>
+        <summary>الملف «تالف» أو لا يفتح <svg class="icon"><use href="#i-chevron"/></svg></summary>
+        <p>غالباً التنزيل لم يكتمل. احذف الملف وأعد التنزيل عبر شبكة ثابتة، ثم تحقّق من بصمة SHA-256. إن اختلفت البصمة فالملف ناقص أو عُدِّل.</p>
+      </details>
+      <details>
+        <summary>Play Protect يحظر التثبيت نهائياً <svg class="icon"><use href="#i-chevron"/></svg></summary>
+        <p>افتح Google Play ← الملف الشخصي ← Play Protect ← الإعدادات، وأوقف «فحص التطبيقات بحثاً عن تهديدات» مؤقتاً، ثبّت التطبيق، ثم أعد تشغيل الفحص. هذا لا يغيّر من أمان جهازك بعد التثبيت.</p>
+      </details>
+      <details>
+        <summary>لا أريد تثبيت أي شيء… هل أستطيع الاستخدام؟ <svg class="icon"><use href="#i-chevron"/></svg></summary>
+        <p>نعم. <a href="../app/" style="color:var(--amber)">النسخة الويب</a> تعمل في المتصفح بنفس الميزات: إدخال البيانات، الاستيراد، رفع الصورة، وتحميل ملفات PDF. ويمكن تثبيتها كتطبيق PWA من قائمة المتصفح لتعمل أوفلاين.</p>
+      </details>
+      <details>
+        <summary>هل يمكنني نقل بياناتي من الجوال إلى الكمبيوتر؟ <svg class="icon"><use href="#i-chevron"/></svg></summary>
+        <p>البيانات محفوظة داخل التطبيق على جهازك فقط ولا تُزامَن. الطريقة العملية: حمّل ملفات PDF من الجوال وأرسلها لنفسك، أو أعد إدخال البيانات في النسخة الويب على الكمبيوتر.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg-soft);border-block:1px solid var(--line-soft)">
+  <div class="container">
+    <div class="grid2">
+      <div class="card">
+        <h3><svg class="icon"><use href="#i-shield"/></svg> ما لا يفعله التطبيق</h3>
+        <p>لا يجمع بيانات، لا يطلب جهات الاتصال أو الموقع أو الرسائل، لا يرسل شيئاً إلى أي خادم، ولا يحتوي إعلانات أو تتبّعاً.</p>
+        <p>كل ما تكتبه يبقى في ذاكرة جهازك، ويمكنك مسحه بالكامل من زر «مسح كل البيانات».</p>
+      </div>
+      <div class="card">
+        <h3><svg class="icon"><use href="#i-check"/></svg> ما تحتاجه قبل البدء</h3>
+        <p>أندرويد 7.0 فأعلى، ومساحة 20 ميجا تقريباً، وسيرة ذاتية قديمة (اختياري) بصيغة PDF أو DOCX إن أردت الاستيراد بدل الكتابة.</p>
+        <p>لا تحتاج إلى إنترنت بعد التثبيت، ولا إلى أي برنامج آخر.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:34px">
+      <a class="btn btn-primary" href="../cv-studio.apk" download>
+        <svg class="icon" width="18" height="18"><use href="#i-download"/></svg> تحميل التطبيق الآن (1.5 ميجا)
+      </a>
+      <p class="note" style="text-align:center">أو <a href="../" style="color:var(--amber)">تعرّف على القوالب العشرة</a> قبل التحميل.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot">
+      <a class="brand" href="../">
+        <img src="../img/icon-192.png" alt="" width="32" height="32" style="width:32px;height:32px">
+        <span>CV Studio<small>استوديو السيرة الذاتية</small></span>
+      </a>
+      <div class="foot-links">
+        <a href="../">الرئيسية</a>
+        <a href="../app/">النسخة الويب</a>
+        <a href="#verify">التحقق</a>
+        <a href="https://github.com/assmmsto/CV" rel="noopener">GitHub</a>
+      </div>
+    </div>
+    <small>CV Studio • الإصدار 1.2.0 • تطبيق أندرويد + نسخة ويب (PWA) — لا يجمع أي بيانات.</small>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var hdr=document.getElementById('hdr');
+  function onScroll(){hdr.classList.toggle('scrolled',(window.scrollY||0)>10);}
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+
+  fetch('../cv-studio.apk',{method:'HEAD'}).then(function(r){
+    var s=r.headers.get('content-length'); if(!s) return;
+    var mb=(s/1048576).toFixed(1).replace('.',',')+' ميجا';
+    var a=document.getElementById('size'), b=document.getElementById('size2');
+    if(a)a.textContent=mb; if(b)b.textContent=mb;
+  }).catch(function(){});
+
+  document.querySelectorAll('.copy').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var t=btn.getAttribute('data-copy');
+      var done=function(){btn.style.color='#34d399';setTimeout(function(){btn.style.color='';},1400);};
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done).catch(done);}
+      else{var i=document.createElement('textarea');i.value=t;document.body.appendChild(i);i.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(i);done();}
+    });
+  });
+})();
+</script>
+</body>
+</html>

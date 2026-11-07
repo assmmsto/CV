@@ -113,7 +113,9 @@ JSZip · Playwright-core (Chromium) · bun — مع PWA كامل (manifest + ser
 
 | الملف | الوصف |
 |---|---|
-| `docs/index.html` | صفحة ويب عربية لتحميل الـ APK (جاهزة لـ GitHub Pages) |
+| `docs/index.html` | صفحة الهبوط العربية: المزايا والقوالب العشرة والأسئلة الشائعة (GitHub Pages) |
+| `docs/download/index.html` | صفحة التحميل: خطوات التثبيت، حل المشاكل، والتحقق من بصمة SHA-256 |
+| `docs/img/` | صور الصفحات: لقطات حقيقية للقوالب العشرة (WebP) وصورة المشاركة og.png |
 | `docs/cv-studio.apk` | حزمة التطبيق الموقّعة (com.cvstudio.app v1.0.0) |
 |  `download/cv-studio-release.keystore` | مفتاح التوقيع (كلمة السر مخزنة لديك في مكان آمن — لا تنشرها أبداً) |
 
