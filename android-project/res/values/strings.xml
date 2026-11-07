@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">CV Studio</string>
+    <string name="saved_downloads">Saved to Downloads</string>
+    <string name="save_failed">Could not save the file</string>
+    <string name="grant_storage">Please grant storage permission, then try again</string>
 </resources>

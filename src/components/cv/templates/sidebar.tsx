@@ -138,7 +138,7 @@ export function ModernSidebar({ data, lang, accent, showPhoto, font }: TemplateP
 }
 
 /* ============================== 6. COMPACT PRO ============================== */
-export function CompactPro({ data, lang, accent, font }: TemplateProps) {
+export function CompactPro({ data, lang, accent, font, showPhoto }: TemplateProps) {
   const p = data.personal;
   const sans = font === "classic" ? FONT_STACKS.classic : FONT_STACKS.modern;
   const sec: CSSProperties = { fontSize: "10.5pt", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.2px", color: "#111", margin: "0 0 6pt" };
@@ -161,6 +161,14 @@ export function CompactPro({ data, lang, accent, font }: TemplateProps) {
             <span key={i} style={{ unicodeBidi: "plaintext" }}>{it.value}</span>
           ))}
         </div>
+        {showPhoto && p.photo && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={p.photo}
+            alt=""
+            style={{ width: 64, height: 64, borderRadius: "50%", objectFit: "cover", border: `2.5px solid ${accent}`, flexShrink: 0, alignSelf: "center" }}
+          />
+        )}
       </header>
 
       <div style={{ display: "flex", gap: "9mm" }}>

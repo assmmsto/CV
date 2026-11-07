@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">استوديو السيرة الذاتية</string>
+    <string name="saved_downloads">تم الحفظ في مجلد التنزيلات</string>
+    <string name="save_failed">تعذر حفظ الملف</string>
+    <string name="grant_storage">امنح إذن التخزين ثم أعد المحاولة</string>
 </resources>

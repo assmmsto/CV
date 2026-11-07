@@ -24,12 +24,32 @@ export const dict = {
   // Export hub
   exportTitle: { ar: "النسخ الجاهزة للتحميل", en: "Ready-to-download versions" },
   exportIntro: {
-    ar: "تُولَّد النسخ العشر تلقائياً من بياناتك الحالية (المدخلة أو المستوردة) — حمّل نسخة واحدة أو الكل بضغطة واحدة.",
-    en: "All 10 versions are generated automatically from your current data (entered or imported) — download one or all with one click.",
+    ar: "تُولَّد النسخ العشر تلقائياً من بياناتك على جهازك مباشرة — حمّل كل قالب بضغطة كملف PDF مستقل، أو حمّل العشر كاملة دفعة واحدة في ملف مضغوط (كل قالب في ملف منفصل).",
+    en: "All 10 versions are generated on your device from your data — download each template as its own PDF file, or grab all 10 at once in a ZIP (one PDF per template).",
   },
   exportAutoNote: {
-    ar: "كل نسخة PDF نصية قابلة للتحديد ومتوافقة مع أنظمة الفرز الآلي (ATS) ومنصات التوظيف.",
-    en: "Every PDF has selectable, ATS-parseable text compatible with tracking systems and job platforms.",
+    ar: "تتم التوليد والتحميل داخل جهازك بدون إنترنت أو سيرفر — يعمل في التطبيق وفي المتصفح معاً.",
+    en: "Generation and download happen on your device — no internet or server needed; works in the app and in the browser.",
+  },
+  exportEachSeparate: {
+    ar: "الملف المضغوط يحتوي 10 ملفات PDF — كل قالب في ملف مستقل.",
+    en: "The ZIP contains 10 PDF files — one per template.",
+  },
+  printAts: {
+    ar: "طباعة احتياطية (نص قابل للتحديد — كل النسخ)",
+    en: "Print fallback (selectable text — all versions)",
+  },
+  savedApk: {
+    ar: "تم حفظ الملف في مجلد التنزيلات (Downloads)",
+    en: "File saved to your Downloads folder",
+  },
+  savingPhoto: {
+    ar: "جارٍ معالجة الصورة…",
+    en: "Processing photo…",
+  },
+  photoHint: {
+    ar: "ستظهر الصورة في 7 من القوالب العشرة (القوالب الصارمة للفرز الآلي تبقى نصية بحتة).",
+    en: "The photo appears in 7 of the 10 templates (the strict ATS ones stay text-only).",
   },
   downloadAllZip: { ar: "تحميل النسخ العشر (ZIP)", en: "Download all 10 (ZIP)" },
   downloadAllHint: {
@@ -42,8 +62,8 @@ export const dict = {
   generatedOne: { ar: "تم تحميل النسخة بنجاح", en: "Version downloaded successfully" },
   generatedAll: { ar: "تم توليد النسخ العشر وتحميلها", en: "All 10 versions generated & downloaded" },
   exportFailed: {
-    ar: "تعذر توليد PDF عبر المحرك — جاري فتح الطباعة الاحتياطية…",
-    en: "PDF engine failed — opening the print fallback…",
+    ar: "تعذر توليد PDF — جاري فتح الطباعة الاحتياطية…",
+    en: "Could not generate the PDF — opening the print fallback…",
   },
   exportFallbackTitle: {
     ar: "تم فتح نافذة الطباعة الاحتياطية",
@@ -52,26 +72,6 @@ export const dict = {
   exportFallbackHint: {
     ar: "اختر «حفظ كـ PDF» من نافذة الطباعة لحفظ السيرة كملف PDF.",
     en: "Choose “Save as PDF” in the print dialog to save the CV as a PDF file.",
-  },
-  apkPreparing: {
-    ar: "جاري تجهيز نسخة PDF عبر نظام الطباعة…",
-    en: "Preparing the PDF via the system print dialog…",
-  },
-  exportEngineHint: {
-    ar: "لتوليد PDF مباشرة على هذا الجهاز ثبّت Bun ثم أعد تشغيل التطبيق.",
-    en: "To generate PDFs natively on this machine, install Bun then restart the app.",
-  },
-  exportErrorNoRunner: {
-    ar: "محرك توليد PDF غير مثبت (يتطلب Bun أو tsx). استخدم الطباعة الاحتياطية بالأسفل أو ثبّت Bun.",
-    en: "PDF runner not installed (requires Bun or tsx). Use the print fallback below or install Bun.",
-  },
-  exportErrorChromium: {
-    ar: "متصفح Chromium/Chrome غير موجود لتوليد PDF. ثبّت Google Chrome أو شغّل: npx playwright-core install chromium",
-    en: "Chromium/Chrome not found for PDF generation. Install Google Chrome or run: npx playwright-core install chromium",
-  },
-  exportErrorTimeout: {
-    ar: "انتهت مهلة توليد PDF — حاول مجدداً أو استخدم الطباعة الاحتياطية.",
-    en: "PDF generation timed out — retry or use the print fallback.",
   },
   exportErrorGeneric: {
     ar: "تعذر توليد PDF — استخدم الطباعة الاحتياطية أو أعد المحاولة.",

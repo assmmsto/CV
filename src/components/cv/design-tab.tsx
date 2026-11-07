@@ -6,6 +6,7 @@ import { dict } from "@/lib/cv/i18n";
 import { Card, CardContent, CardHeader, CardTitle, Button, Badge, Label, Switch } from "@/components/ui";
 import { Check, Palette, Type, ImageIcon } from "lucide-react";
 import { CvSheet } from "./cv-sheet";
+import { resizeImageFile } from "@/lib/cv/image";
 import { useRef, useState } from "react";
 import type { Lang } from "@/lib/cv/types";
 
@@ -25,12 +26,15 @@ export function DesignTab({ lang }: { lang: Lang }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [thumbZoom] = useState(0.16);
 
-  const onPhoto = (f: File | undefined) => {
+  const onPhoto = async (f: File | undefined) => {
     if (!f) return;
-    if (f.size > 2 * 1024 * 1024) return;
-    const reader = new FileReader();
-    reader.onload = () => updatePersonal({ photo: String(reader.result) });
-    reader.readAsDataURL(f);
+    try {
+      const dataUrl = await resizeImageFile(f);
+      updatePersonal({ photo: dataUrl });
+      setShowPhoto(true); // the photo should actually appear once uploaded
+    } catch {
+      /* keep UI stable */
+    }
   };
 
   return (

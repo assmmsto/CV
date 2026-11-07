@@ -3,7 +3,7 @@ import { slabel, levelLabel } from "@/lib/cv/i18n";
 import { CSSProperties } from "react";
 
 /* ============================== 7. CORPORATE ============================== */
-export function Corporate({ data, lang, accent, font }: TemplateProps) {
+export function Corporate({ data, lang, accent, font, showPhoto }: TemplateProps) {
   const p = data.personal;
   const sans = font === "classic" ? FONT_STACKS.classic : FONT_STACKS.modern;
   const sec: CSSProperties = {
@@ -21,19 +21,29 @@ export function Corporate({ data, lang, accent, font }: TemplateProps) {
 
   return (
     <div dir={lang === "ar" ? "rtl" : "ltr"} style={{ fontFamily: sans, background: "#fff", color: "#222", textAlign: "start" }}>
-      <header style={{ background: accent, color: "#fff", padding: "9mm 15mm" }}>
-        <h1 style={{ fontSize: "23pt", fontWeight: 800, margin: 0, letterSpacing: "0.5px" }}>
-          {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
-        </h1>
-        {pick(p.jobTitle, lang) && <p style={{ fontSize: "13pt", margin: "3pt 0 7pt", opacity: 0.92 }}>{pick(p.jobTitle, lang)}</p>}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 18px", fontSize: "9.5pt", opacity: 0.95 }}>
-          {contactItems(data, lang).map((it, i) => (
-            <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
-              <MiniIcon name={it.icon} size={11} style={{ color: "#fff" }} />
-              {it.value}
-            </span>
-          ))}
+      <header style={{ background: accent, color: "#fff", padding: "9mm 15mm", display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <h1 style={{ fontSize: "23pt", fontWeight: 800, margin: 0, letterSpacing: "0.5px" }}>
+            {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
+          </h1>
+          {pick(p.jobTitle, lang) && <p style={{ fontSize: "13pt", margin: "3pt 0 7pt", opacity: 0.92 }}>{pick(p.jobTitle, lang)}</p>}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 18px", fontSize: "9.5pt", opacity: 0.95 }}>
+            {contactItems(data, lang).map((it, i) => (
+              <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                <MiniIcon name={it.icon} size={11} style={{ color: "#fff" }} />
+                {it.value}
+              </span>
+            ))}
+          </div>
         </div>
+        {showPhoto && p.photo && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={p.photo}
+            alt=""
+            style={{ width: 82, height: 82, borderRadius: "50%", objectFit: "cover", border: "3px solid rgba(255,255,255,0.85)", flexShrink: 0 }}
+          />
+        )}
       </header>
 
       <div style={{ padding: "8mm 15mm" }}>
@@ -249,7 +259,7 @@ export function ElegantDark({ data, lang, accent, font }: TemplateProps) {
 }
 
 /* ============================== 9. TIMELINE PRO ============================== */
-export function TimelinePro({ data, lang, accent, font }: TemplateProps) {
+export function TimelinePro({ data, lang, accent, font, showPhoto }: TemplateProps) {
   const p = data.personal;
   const sans = font === "classic" ? FONT_STACKS.classic : FONT_STACKS.modern;
   const sec: CSSProperties = { fontSize: "12pt", fontWeight: 700, color: accent, margin: "0 0 8pt", textTransform: "uppercase", letterSpacing: "1.5px" };
@@ -272,6 +282,14 @@ export function TimelinePro({ data, lang, accent, font }: TemplateProps) {
             </span>
           ))}
         </div>
+        {showPhoto && p.photo && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={p.photo}
+            alt=""
+            style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", border: `3px solid ${accent}`, flexShrink: 0 }}
+          />
+        )}
       </header>
 
       {hasSection(data, "summary") && (

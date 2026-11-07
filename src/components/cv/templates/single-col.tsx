@@ -218,7 +218,7 @@ export function AtsModern({ data, lang, font }: TemplateProps) {
 }
 
 /* ============================== 3. EXECUTIVE ============================== */
-export function Executive({ data, lang, font }: TemplateProps) {
+export function Executive({ data, lang, font, showPhoto }: TemplateProps) {
   const p = data.personal;
   const serif = FONT_STACKS.mixed;
   const sec: CSSProperties = {
@@ -236,6 +236,12 @@ export function Executive({ data, lang, font }: TemplateProps) {
   return (
     <div dir={lang === "ar" ? "rtl" : "ltr"} style={{ padding: "16mm 18mm", fontFamily: serif, color: "#1a1a1a", textAlign: "start" }}>
       <header style={{ textAlign: "center", marginBottom: 4 }}>
+        {showPhoto && p.photo && (
+          <div style={{ marginBottom: 8 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={p.photo} alt="" style={{ width: 76, height: 76, borderRadius: "50%", objectFit: "cover", border: "2px solid #1a1a1a", margin: "0 auto" }} />
+          </div>
+        )}
         <h1 style={{ fontSize: "23pt", fontWeight: 400, margin: 0, letterSpacing: "3px", textTransform: "uppercase", fontVariant: lang === "en" ? "small-caps" : "normal" }}>
           {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
         </h1>

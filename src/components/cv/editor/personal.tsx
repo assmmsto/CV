@@ -2,10 +2,11 @@
 
 import { useCVStore } from "@/lib/cv/store";
 import { dict } from "@/lib/cv/i18n";
+import { resizeImageFile } from "@/lib/cv/image";
 import { BiField, PlainField } from "./fields";
 import { Card, CardContent, CardHeader, CardTitle, Button } from "@/components/ui";
-import { User, Wand2, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { User, Wand2, Loader2, Camera, Trash2, ImageIcon } from "lucide-react";
+import { useState, useRef } from "react";
 import { BiText, PersonalInfo, Lang } from "@/lib/cv/types";
 
 interface TranslateAPIResponse {
@@ -25,7 +26,24 @@ const PAIRS: Array<{ key: string; label: string }> = [
 export function PersonalSection({ lang }: { lang: Lang }) {
   const personal = useCVStore((s) => s.data.personal);
   const updatePersonal = useCVStore((s) => s.updatePersonal);
+  const setShowPhoto = useCVStore((s) => s.setShowPhoto);
   const [translating, setTranslating] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const photoRef = useRef<HTMLInputElement | null>(null);
+
+  const onPhotoPicked = async (f: File | undefined) => {
+    if (!f) return;
+    setPhotoBusy(true);
+    try {
+      const dataUrl = await resizeImageFile(f);
+      updatePersonal({ photo: dataUrl });
+      setShowPhoto(true); // make the photo actually appear in the CV
+    } catch {
+      /* keep UI stable */
+    } finally {
+      setPhotoBusy(false);
+    }
+  };
 
   const collect = (from: "ar" | "en", to: "ar" | "en") => {
     const items: { key: string; text: string }[] = [];
@@ -94,6 +112,43 @@ export function PersonalSection({ lang }: { lang: Lang }) {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* photo upload — works with camera & gallery on mobile */}
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border bg-muted/30 p-3">
+          {personal.photo ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img src={personal.photo} alt="" className="h-16 w-16 rounded-full border-2 border-amber-500/60 object-cover" />
+          ) : (
+            <span className="flex h-16 w-16 items-center justify-center rounded-full border bg-card text-muted-foreground">
+              <ImageIcon className="h-6 w-6" />
+            </span>
+          )}
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <span className="text-sm font-bold">{dict.photo[lang]}</span>
+            <span className="text-[11px] leading-snug text-muted-foreground">{dict.photoHint[lang]}</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              ref={photoRef}
+              onChange={(e) => {
+                onPhotoPicked(e.target.files?.[0]);
+                e.currentTarget.value = "";
+              }}
+            />
+            <Button type="button" size="sm" variant="outline" className="gap-1.5" disabled={photoBusy} onClick={() => photoRef.current?.click()}>
+              {photoBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+              {dict.uploadPhoto[lang]}
+            </Button>
+            {personal.photo && (
+              <Button type="button" size="sm" variant="ghost" className="h-8 gap-1.5 text-destructive" onClick={() => updatePersonal({ photo: undefined })}>
+                <Trash2 className="h-4 w-4" />
+                {dict.removePhoto[lang]}
+              </Button>
+            )}
+          </div>
+        </div>
         <BiField label={dict.fullName[lang]} value={personal.fullName} onChange={(v) => updatePersonal({ fullName: v })} />
         <BiField label={dict.jobTitle[lang]} value={personal.jobTitle} onChange={(v) => updatePersonal({ jobTitle: v })} />
         <div className="grid gap-4 md:grid-cols-2">

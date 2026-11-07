@@ -5,37 +5,29 @@ import { TEMPLATES } from "./templates/registry";
 import { TemplateRenderer } from "./templates/registry";
 import { useCVStore, completeness } from "@/lib/cv/store";
 import { dict } from "@/lib/cv/i18n";
+import {
+  generateTemplatePdf,
+  zipPdfBlobs,
+  saveBlobEverywhere,
+  PdfEntry,
+} from "@/lib/cv/client-pdf";
+import { exportBaseName, safeFileName } from "@/lib/cv/export-names";
 import { Button, Badge, Card, CardContent } from "@/components/ui";
 import { toast } from "@/hooks/use-toast";
-import { FileDown, FolderArchive, ShieldCheck, Sparkles, Loader2, AlertTriangle, FileCheck2, Printer } from "lucide-react";
+import {
+  FileDown,
+  FolderArchive,
+  ShieldCheck,
+  Sparkles,
+  Loader2,
+  AlertTriangle,
+  FileCheck2,
+  Printer,
+} from "lucide-react";
 import type { Lang } from "@/lib/cv/types";
 
-type Body = {
-  data: unknown;
-  lang: Lang;
-  templates: string[] | "all";
-  accent: string;
-  showPhoto: boolean;
-  font: "modern" | "classic" | "mixed";
-};
-
-/** Map export error codes to clear bilingual messages. */
-function exportErrorMessage(code: string, lang: Lang): string {
-  switch (code) {
-    case "no-runner":
-    case "worker-spawn-failed":
-      return dict.exportErrorNoRunner[lang];
-    case "chromium-not-found":
-      return dict.exportErrorChromium[lang];
-    case "export-timeout":
-      return dict.exportErrorTimeout[lang];
-    default:
-      return dict.exportErrorGeneric[lang];
-  }
-}
-
 /* ------------------------------------------------------------------ */
-/* Browser print fallback — works with zero server dependencies        */
+/* Print fallback — secondary option for a text-selectable PDF         */
 /* (templates use inline styles, so serialized markup is self-styled)  */
 /* ------------------------------------------------------------------ */
 
@@ -62,12 +54,6 @@ body {
 .cv-sheet li { break-inside: avoid; page-break-inside: avoid; }
 .cv-sheet h1, .cv-sheet h2, .cv-sheet h3 { break-after: avoid; page-break-after: avoid; }
 `;
-
-declare global {
-  interface Window {
-    AndroidBridge?: { printHtml: (html: string) => void };
-  }
-}
 
 function printViaBrowser(sheetsHTML: string, lang: Lang) {
   const dir = lang === "ar" ? "rtl" : "ltr";
@@ -102,51 +88,12 @@ function printViaBrowser(sheetsHTML: string, lang: Lang) {
   }, 700);
 }
 
-async function postExport(body: Body): Promise<{ blob: Blob; disposition: string }> {
-  const res = await fetch("/api/export/pdf", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    let code = "export-failed";
-    try {
-      const j = await res.json();
-      code = j?.error ?? code;
-    } catch {
-      /* ignore */
-    }
-    throw new Error(code);
-  }
-  const disposition = res.headers.get("Content-Disposition") ?? "";
-  const blob = await res.blob();
-  return { blob, disposition };
-}
-
-/** Extract filename* (RFC 5987) or filename from Content-Disposition. */
-function fileNameFrom(disposition: string): string | null {
-  const utf8 = /filename\*=UTF-8''([^;]+)/i.exec(disposition);
-  if (utf8) {
-    try {
-      return decodeURIComponent(utf8[1]);
-    } catch {
-      /* fallthrough */
-    }
-  }
-  const plain = /filename="?([^";]+)"?/i.exec(disposition);
-  return plain ? plain[1] : null;
-}
-
-function saveBlob(blob: Blob, fallbackName: string, disposition: string) {
-  const name = fileNameFrom(disposition) ?? fallbackName;
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = name;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 4000);
+/** File name for one template PDF: "محمد-علي-CV-ATS-Classic.pdf". */
+function pdfFileName(data: ReturnType<typeof useCVStore.getState>["data"], cvLang: Lang, templateId: string): string {
+  const base = exportBaseName(data, cvLang);
+  const meta = TEMPLATES.find((t) => t.id === templateId);
+  const tname = safeFileName(meta?.name.en ?? templateId);
+  return `${base}-CV-${tname}.pdf`;
 }
 
 export function ExportTab({ lang }: { lang: Lang }) {
@@ -158,36 +105,10 @@ export function ExportTab({ lang }: { lang: Lang }) {
   const fontChoice = useCVStore((s) => s.fontChoice);
   const loadSample = useCVStore((s) => s.loadSample);
 
-  const inApk = typeof window !== "undefined" && Boolean(window.AndroidBridge?.printHtml);
-
   const [busyAll, setBusyAll] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
-  const [engineReady, setEngineReady] = useState<boolean | null>(null);
+  const [allProgress, setAllProgress] = useState(0);
   const [printTarget, setPrintTarget] = useState<{ mode: "one" | "all"; tid?: string } | null>(null);
-
-  /* engine diagnostics (once) — drives the amber banner.
-     Inside the APK the native print engine is always available → never warn. */
-  useEffect(() => {
-    if (inApk) {
-      setEngineReady(true);
-      return;
-    }
-    let alive = true;
-    fetch("/api/export/diag")
-      .then((r) => {
-        if (!r.ok) throw new Error(String(r.status));
-        return r.json();
-      })
-      .then((j) => {
-        if (alive) setEngineReady(Boolean(j?.engineReady));
-      })
-      .catch(() => {
-        if (alive) setEngineReady(true); // assume ok if diag unreachable
-      });
-    return () => {
-      alive = false;
-    };
-  }, []);
 
   /* print fallback: wait for the offscreen render, then print */
   useEffect(() => {
@@ -213,59 +134,60 @@ export function ExportTab({ lang }: { lang: Lang }) {
   const pct = completeness(data);
   const hasData = (data.personal.fullName.ar || data.personal.fullName.en) && pct >= 25;
 
-  const bodyBase: Omit<Body, "templates"> = {
-    data,
-    lang: cvLang,
-    accent,
-    showPhoto,
-    font: fontChoice,
+  const jobBase = { data, lang: cvLang, accent, showPhoto, font: fontChoice };
+
+  const announceSaved = (via: "bridge" | "anchor") => {
+    if (via === "bridge") toast({ title: dict.savedApk[lang] });
   };
 
-  const downloadAll = async () => {
-    if (busyAll || busyId) return;
-    /* APK: go straight to the native print dialog — no server roundtrip */
-    if (inApk) {
-      setBusyAll(true);
-      toast({ title: dict.apkPreparing[lang] });
-      setPrintTarget({ mode: "all" });
-      return;
-    }
-    setBusyAll(true);
-    toast({ title: dict.generatingAll[lang], description: dict.exportAutoNote[lang] });
-    try {
-      const { blob, disposition } = await postExport({ ...bodyBase, templates: "all" });
-      saveBlob(blob, "cv-10-versions.zip", disposition);
-      toast({ title: dict.generatedAll[lang] });
-    } catch (e) {
-      console.error("export all failed:", e);
-      toast({ title: dict.exportFailed[lang], description: exportErrorMessage((e as Error).message, lang), variant: "destructive" });
-      setPrintTarget({ mode: "all" }); // browser print fallback
-    } finally {
-      setBusyAll(false);
-    }
-  };
-
+  /* ---------- download ONE template as its own PDF ---------- */
   const downloadOne = async (tid: string) => {
     if (busyAll || busyId) return;
-    /* APK: go straight to the native print dialog — no server roundtrip */
-    if (inApk) {
-      setBusyId(tid);
-      toast({ title: dict.apkPreparing[lang] });
-      setPrintTarget({ mode: "one", tid });
-      return;
-    }
     setBusyId(tid);
+    const meta = TEMPLATES.find((t) => t.id === tid);
     try {
-      const { blob, disposition } = await postExport({ ...bodyBase, templates: [tid] });
-      const meta = TEMPLATES.find((t) => t.id === tid);
-      saveBlob(blob, `CV - ${meta?.name.en ?? tid}.pdf`, disposition);
+      const blob = await generateTemplatePdf({ ...jobBase, templateId: tid });
+      const name = pdfFileName(data, cvLang, tid);
+      const via = await saveBlobEverywhere(blob, name, "application/pdf");
+      announceSaved(via);
       toast({ title: dict.generatedOne[lang], description: meta?.name[lang] });
     } catch (e) {
-      console.error("export one failed:", e);
-      toast({ title: dict.exportFailed[lang], description: exportErrorMessage((e as Error).message, lang), variant: "destructive" });
-      setPrintTarget({ mode: "one", tid }); // browser print fallback
+      console.error("client pdf failed:", e);
+      toast({ title: dict.exportFailed[lang], variant: "destructive" });
+      setPrintTarget({ mode: "one", tid }); // last-resort print fallback
     } finally {
       setBusyId(null);
+    }
+  };
+
+  /* ---------- download ALL 10 templates — each as its own PDF in a ZIP ---------- */
+  const downloadAll = async () => {
+    if (busyAll || busyId) return;
+    setBusyAll(true);
+    setAllProgress(0);
+    try {
+      const base = exportBaseName(data, cvLang);
+      const entries: PdfEntry[] = [];
+      for (let i = 0; i < TEMPLATES.length; i++) {
+        const t = TEMPLATES[i];
+        setAllProgress(i + 1);
+        const blob = await generateTemplatePdf({ ...jobBase, templateId: t.id });
+        entries.push({
+          name: `${String(i + 1).padStart(2, "0")}-${safeFileName(t.name.en)}-${base}.pdf`,
+          blob,
+        });
+      }
+      const zip = await zipPdfBlobs(entries);
+      const via = await saveBlobEverywhere(zip, `${base}-CV-10-versions.zip`, "application/zip");
+      announceSaved(via);
+      toast({ title: dict.generatedAll[lang], description: dict.exportEachSeparate[lang] });
+    } catch (e) {
+      console.error("client pdf (all) failed:", e);
+      toast({ title: dict.exportFailed[lang], variant: "destructive" });
+      setPrintTarget({ mode: "all" }); // last-resort print fallback
+    } finally {
+      setBusyAll(false);
+      setAllProgress(0);
     }
   };
 
@@ -290,17 +212,7 @@ export function ExportTab({ lang }: { lang: Lang }) {
   /* ---------- export hub ---------- */
   return (
     <div className="space-y-4">
-      {/* engine warning (only when the native PDF engine is missing) */}
-      {engineReady === false && (
-        <div className="flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 p-3 text-[13px] leading-relaxed text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-          <span>
-            {dict.exportErrorNoRunner[lang]} {dict.exportEngineHint[lang]}
-          </span>
-        </div>
-      )}
-
-      {/* offscreen print stage for the browser fallback */}
+      {/* offscreen print stage for the fallback */}
       {printTarget && (
         <div id="cv-print-stage" aria-hidden className="hidden">
           {(printTarget.mode === "all" ? TEMPLATES.map((t) => t.id) : [printTarget.tid!]).map((id) => (
@@ -343,7 +255,11 @@ export function ExportTab({ lang }: { lang: Lang }) {
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-3 text-sm font-extrabold text-stone-900 shadow-lg transition hover:bg-amber-400 disabled:opacity-60"
             >
               {busyAll ? <Loader2 className="h-4 w-4 animate-spin" /> : <FolderArchive className="h-5 w-5" />}
-              {busyAll ? dict.generatingAll[lang] : dict.downloadAllZip[lang]}
+              {busyAll
+                ? lang === "ar"
+                  ? `جارٍ توليد النسخة ${allProgress}/10…`
+                  : `Generating ${allProgress}/10…`
+                : dict.downloadAllZip[lang]}
             </button>
             <button
               onClick={() => setPrintTarget({ mode: "all" })}
@@ -351,7 +267,7 @@ export function ExportTab({ lang }: { lang: Lang }) {
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-2 text-xs font-bold text-white transition hover:bg-white/20 disabled:opacity-60 dark:border-border dark:bg-muted/50 dark:text-card-foreground"
             >
               <Printer className="h-4 w-4" />
-              {lang === "ar" ? "طباعة احتياطية (كل النسخ)" : "Print fallback (all versions)"}
+              {dict.printAts[lang]}
             </button>
 
             {/* CV language */}
