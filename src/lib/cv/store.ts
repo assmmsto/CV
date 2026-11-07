@@ -6,6 +6,8 @@ import {
   CVData,
   CVState,
   Lang,
+  BiText,
+  Level,
   emptyCV,
   uid,
   ExperienceItem,
@@ -126,6 +128,90 @@ const listHelpers = <T extends { id: string }>(list: T[], id: string, dir: -1 | 
   [copy[idx], copy[target]] = [copy[target], copy[idx]];
   return copy;
 };
+
+/* ------------------------------------------------------------------ */
+/* Self-healing hydration: an old / partial / corrupted persisted      */
+/* state must never crash the app ("Application error") — heal it.     */
+/* ------------------------------------------------------------------ */
+
+const asStr = (v: unknown): string => (typeof v === "string" ? v : "");
+const asBi = (v: unknown): BiText => {
+  const o = (v ?? {}) as Record<string, unknown>;
+  return { ar: asStr(o.ar), en: asStr(o.en) };
+};
+
+/** Merge any persisted value into a guaranteed-valid CVData. */
+export function sanitizeData(raw: unknown): CVData {
+  const base = emptyCV();
+  if (!raw || typeof raw !== "object") return base;
+  const d = raw as Record<string, unknown>;
+  const p = (d.personal ?? {}) as Record<string, unknown>;
+  const arr = (k: string): unknown[] => (Array.isArray(d[k]) ? (d[k] as unknown[]) : []);
+
+  return {
+    personal: {
+      fullName: asBi(p.fullName),
+      jobTitle: asBi(p.jobTitle),
+      email: asStr(p.email),
+      phone: asStr(p.phone),
+      city: asBi(p.city),
+      country: asBi(p.country),
+      website: asStr(p.website),
+      linkedin: asStr(p.linkedin),
+      github: asStr(p.github),
+      ...(typeof p.photo === "string" && p.photo.startsWith("data:image/") ? { photo: p.photo } : {}),
+      summary: asBi(p.summary),
+    },
+    experience: arr("experience").map((e) => {
+      const o = (e ?? {}) as Record<string, unknown>;
+      return { ...blankExperience(), ...o, id: asStr(o.id) || uid(), company: asBi(o.company), position: asBi(o.position), city: asBi(o.city), description: asBi(o.description), startDate: asStr(o.startDate), endDate: asStr(o.endDate), current: Boolean(o.current) };
+    }),
+    education: arr("education").map((e) => {
+      const o = (e ?? {}) as Record<string, unknown>;
+      return { ...blankEducation(), ...o, id: asStr(o.id) || uid(), institution: asBi(o.institution), degree: asBi(o.degree), field: asBi(o.field), grade: asBi(o.grade), startDate: asStr(o.startDate), endDate: asStr(o.endDate), current: Boolean(o.current) };
+    }),
+    skills: arr("skills").map((e) => {
+      const o = (e ?? {}) as Record<string, unknown>;
+      const lv = typeof o.level === "number" ? Math.round(o.level) : 4;
+      return { ...blankSkill(), ...o, id: asStr(o.id) || uid(), name: asBi(o.name), level: (Math.min(5, Math.max(1, lv)) as 1 | 2 | 3 | 4 | 5) };
+    }),
+    languages: arr("languages").map((e) => {
+      const o = (e ?? {}) as Record<string, unknown>;
+      const lv = asStr(o.level);
+      const okLv = (["native", "fluent", "advanced", "intermediate", "basic"] as const).includes(lv as "native") ? lv as Level : "fluent";
+      return { ...blankLanguage(), ...o, id: asStr(o.id) || uid(), name: asBi(o.name), level: okLv };
+    }),
+    certifications: arr("certifications").map((e) => {
+      const o = (e ?? {}) as Record<string, unknown>;
+      return { ...blankCert(), ...o, id: asStr(o.id) || uid(), name: asBi(o.name), issuer: asBi(o.issuer), date: asStr(o.date), url: asStr(o.url) };
+    }),
+    projects: arr("projects").map((e) => {
+      const o = (e ?? {}) as Record<string, unknown>;
+      return { ...blankProject(), ...o, id: asStr(o.id) || uid(), name: asBi(o.name), description: asBi(o.description), url: asStr(o.url), technologies: asBi(o.technologies) };
+    }),
+    customSections: arr("customSections").map((e) => {
+      const o = (e ?? {}) as Record<string, unknown>;
+      return { ...blankCustom(), ...o, id: asStr(o.id) || uid(), title: asBi(o.title), content: asBi(o.content) };
+    }),
+  };
+}
+
+/** Heal the persisted state (zustand passes the INNER state, not the {state,version} wrapper). */
+function sanitizePersisted(persisted: unknown, current: CVStore): CVStore {
+  if (!persisted || typeof persisted !== "object") return current;
+  const st = persisted as Record<string, unknown>;
+  return {
+    ...current,
+    data: sanitizeData(st.data),
+    uiLang: st.uiLang === "en" ? "en" : "ar",
+    cvLang: st.cvLang === "en" ? "en" : "ar",
+    templateId: asStr(st.templateId) || "ats-classic",
+    accent: asStr(st.accent) || "#0f172a",
+    showPhoto: Boolean(st.showPhoto),
+    fontChoice: st.fontChoice === "classic" || st.fontChoice === "mixed" ? st.fontChoice : "modern",
+    uiTab: asStr(st.uiTab) || "data",
+  };
+}
 
 export const useCVStore = create<CVStore>()(
   persist(
@@ -273,6 +359,8 @@ export const useCVStore = create<CVStore>()(
       name: "cv-studio-data-v1",
       storage: createJSONStorage(() => localStorage),
       version: 1,
+      // heal old/partial persisted data instead of crashing on hydration
+      merge: sanitizePersisted,
     }
   )
 );

@@ -3,7 +3,7 @@ import { slabel } from "@/lib/cv/i18n";
 import { CSSProperties } from "react";
 
 /* ============================== 1. ATS CLASSIC ============================== */
-export function AtsClassic({ data, lang, font }: TemplateProps) {
+export function AtsClassic({ data, lang, font, showPhoto }: TemplateProps) {
   const p = data.personal;
   const serif = font === "modern" ? FONT_STACKS.modern : FONT_STACKS.classic;
   const sec: CSSProperties = { fontSize: "12pt", fontWeight: 700, textTransform: "uppercase", borderBottom: "1px solid #000", paddingBottom: 2, margin: "14pt 0 6pt" };
@@ -15,6 +15,10 @@ export function AtsClassic({ data, lang, font }: TemplateProps) {
   return (
     <div dir={lang === "ar" ? "rtl" : "ltr"} style={{ padding: "16mm 15mm", fontFamily: serif, color: "#000", textAlign: "start" }}>
       <header style={{ textAlign: "center", marginBottom: "6pt" }}>
+        {showPhoto && p.photo && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={p.photo} alt="" style={{ width: 68, height: 68, borderRadius: "50%", objectFit: "cover", border: "2px solid #444", display: "block", margin: "0 auto 6pt" }} />
+        )}
         <h1 style={{ fontSize: "20pt", fontWeight: 700, margin: 0, textTransform: "uppercase", letterSpacing: "1px" }}>
           {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
         </h1>
@@ -111,7 +115,7 @@ export function AtsClassic({ data, lang, font }: TemplateProps) {
 }
 
 /* ============================== 2. ATS MODERN ============================== */
-export function AtsModern({ data, lang, font }: TemplateProps) {
+export function AtsModern({ data, lang, font, showPhoto }: TemplateProps) {
   const p = data.personal;
   const sans = font === "classic" ? FONT_STACKS.classic : FONT_STACKS.modern;
   const sec: CSSProperties = { fontSize: "11.5pt", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", margin: "13pt 0 5pt", paddingBottom: 3, borderBottom: "2px solid #111" };
@@ -122,6 +126,10 @@ export function AtsModern({ data, lang, font }: TemplateProps) {
   return (
     <div dir={lang === "ar" ? "rtl" : "ltr"} style={{ padding: "14mm 15mm", fontFamily: sans, color: "#111", textAlign: "start" }}>
       <header style={{ borderBottom: "3px solid #111", paddingBottom: 8, marginBottom: 4 }}>
+        {showPhoto && p.photo && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={p.photo} alt="" style={{ width: 74, height: 74, borderRadius: "50%", objectFit: "cover", border: "2.5px solid #111", display: "block", margin: "0 0 8pt", marginInlineEnd: "auto" }} />
+        )}
         <h1 style={{ fontSize: "22pt", fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}>
           {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
         </h1>

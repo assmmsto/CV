@@ -20,7 +20,8 @@ export function PwaRegister() {
         window.location.protocol === "file:");
     if ("serviceWorker" in navigator && !inApk) {
       const onLoad = () => {
-        navigator.serviceWorker.register("/sw.js").catch(() => {});
+        // relative path → works both at host root (APK) and under /CV/app/ (GitHub Pages)
+        navigator.serviceWorker.register("sw.js").catch(() => {});
       };
       if (document.readyState === "complete") onLoad();
       else {

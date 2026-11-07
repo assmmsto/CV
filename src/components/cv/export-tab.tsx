@@ -140,27 +140,32 @@ export function ExportTab({ lang }: { lang: Lang }) {
     if (via === "bridge") toast({ title: dict.savedApk[lang] });
   };
 
-  /* ---------- download ONE template as its own PDF ---------- */
+  /* ---------- download ONE template as its own PDF — direct, no print dialog ---------- */
   const downloadOne = async (tid: string) => {
     if (busyAll || busyId) return;
     setBusyId(tid);
     const meta = TEMPLATES.find((t) => t.id === tid);
     try {
-      const blob = await generateTemplatePdf({ ...jobBase, templateId: tid });
+      let blob: Blob;
+      try {
+        blob = await generateTemplatePdf({ ...jobBase, templateId: tid });
+      } catch {
+        // one automatic retry at lower resolution — never degrade into a print window
+        blob = await generateTemplatePdf({ ...jobBase, templateId: tid, scale: 1 });
+      }
       const name = pdfFileName(data, cvLang, tid);
       const via = await saveBlobEverywhere(blob, name, "application/pdf");
       announceSaved(via);
       toast({ title: dict.generatedOne[lang], description: meta?.name[lang] });
     } catch (e) {
       console.error("client pdf failed:", e);
-      toast({ title: dict.exportFailed[lang], variant: "destructive" });
-      setPrintTarget({ mode: "one", tid }); // last-resort print fallback
+      toast({ title: dict.exportFailed[lang], description: dict.exportFallbackHint[lang], variant: "destructive" });
     } finally {
       setBusyId(null);
     }
   };
 
-  /* ---------- download ALL 10 templates — each as its own PDF in a ZIP ---------- */
+  /* ---------- download ALL 10 templates — each as its own PDF file inside a ZIP ---------- */
   const downloadAll = async () => {
     if (busyAll || busyId) return;
     setBusyAll(true);
@@ -168,23 +173,37 @@ export function ExportTab({ lang }: { lang: Lang }) {
     try {
       const base = exportBaseName(data, cvLang);
       const entries: PdfEntry[] = [];
+      let failed = 0;
       for (let i = 0; i < TEMPLATES.length; i++) {
         const t = TEMPLATES[i];
+        try {
+          let blob: Blob;
+          try {
+            blob = await generateTemplatePdf({ ...jobBase, templateId: t.id });
+          } catch {
+            blob = await generateTemplatePdf({ ...jobBase, templateId: t.id, scale: 1 });
+          }
+          entries.push({
+            name: `${String(i + 1).padStart(2, "0")}-${safeFileName(t.name.en)}-${base}.pdf`,
+            blob,
+          });
+        } catch (e) {
+          console.error(`client pdf failed for ${t.id}:`, e);
+          failed++;
+        }
         setAllProgress(i + 1);
-        const blob = await generateTemplatePdf({ ...jobBase, templateId: t.id });
-        entries.push({
-          name: `${String(i + 1).padStart(2, "0")}-${safeFileName(t.name.en)}-${base}.pdf`,
-          blob,
-        });
       }
+      if (!entries.length) throw new Error("all-templates-failed");
       const zip = await zipPdfBlobs(entries);
       const via = await saveBlobEverywhere(zip, `${base}-CV-10-versions.zip`, "application/zip");
       announceSaved(via);
-      toast({ title: dict.generatedAll[lang], description: dict.exportEachSeparate[lang] });
+      toast({
+        title: dict.generatedAll[lang],
+        description: failed ? `${dict.exportEachSeparate[lang]} (${failed} ✕)` : dict.exportEachSeparate[lang],
+      });
     } catch (e) {
       console.error("client pdf (all) failed:", e);
-      toast({ title: dict.exportFailed[lang], variant: "destructive" });
-      setPrintTarget({ mode: "all" }); // last-resort print fallback
+      toast({ title: dict.exportFailed[lang], description: dict.exportFallbackHint[lang], variant: "destructive" });
     } finally {
       setBusyAll(false);
       setAllProgress(0);

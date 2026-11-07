@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   description:
     "منشئ سيرة ذاتية احترافي ثنائي اللغة (عربي/إنجليزي) — أدخل بياناتك مرة واحدة واحصل على 10 قوالب متوافقة مع أنظمة ATS ومنصات التوظيف. يعمل بدون إنترنت.",
   applicationName: "CV Studio",
-  manifest: "/manifest.json",
+  manifest: "manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -30,10 +30,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+      { url: "icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "icons/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
-    apple: [{ url: "/icons/icon-192.png", sizes: "192x192" }],
+    apple: [{ url: "icons/icon-192.png", sizes: "192x192" }],
   },
   keywords: ["CV", "resume", "سيرة ذاتية", "ATS", "builder", "منشئ السيرة الذاتية"],
 };

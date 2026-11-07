@@ -9,7 +9,8 @@ import { uid, type Level } from "./types";
 
 export async function extractPdfText(file: File): Promise<string> {
   const pdfjs = (await import("pdfjs-dist")) as typeof import("pdfjs-dist");
-  pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+  // relative → works at host root (APK), under /CV/app/ (GitHub Pages) and in dev
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdf.worker.min.mjs", document.baseURI).href;
   const buffer = await file.arrayBuffer();
   const loadingTask = pdfjs.getDocument({ data: buffer });
   const doc = await loadingTask.promise;
