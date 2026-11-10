@@ -1,0 +1,750 @@
+{
+  "ats-classic:ar": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 0,
+      "lsViolations": 0,
+      "centered": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 205850,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "ats-modern:ar": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 0,
+      "lsViolations": 0,
+      "strongHead": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 209703,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "executive:ar": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 0,
+      "lsViolations": 0,
+      "competencies2col": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 197230,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "minimal-pro:ar": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "lightHead": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 175332,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "modern-sidebar:ar": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "darkSide": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 235295,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "corporate:ar": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "band": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 218087,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "timeline:ar": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "timelineDots": true,
+      "dotCount": 3,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 203064,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "elegant-dark:ar": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "navyBar": true,
+      "cefrTable": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 240391,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "compact-pro:ar": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "eduFirst": true,
+      "_dbg": {
+        "eduIdx": 0,
+        "expIdx": 1,
+        "h2s": [
+          "التعليم",
+          "الخبرات العملية",
+          "المشاريع",
+          "المهارات",
+          "اللغات",
+          "الشهادات"
+        ]
+      },
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 203524,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "contemporary:ar": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "gradient": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 239686,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "ats-classic:en": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 0,
+      "lsViolations": 0,
+      "centered": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 249351,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "ats-modern:en": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 0,
+      "lsViolations": 0,
+      "strongHead": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 256343,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "executive:en": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 0,
+      "lsViolations": 0,
+      "competencies2col": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 244344,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "minimal-pro:en": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "lightHead": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 213966,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "modern-sidebar:en": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "darkSide": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 269475,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "corporate:en": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "band": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 259947,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "timeline:en": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "timelineDots": true,
+      "dotCount": 3,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 239909,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "elegant-dark:en": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "navyBar": true,
+      "cefrTable": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 277679,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "compact-pro:en": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "eduFirst": true,
+      "_dbg": {
+        "eduIdx": 0,
+        "expIdx": 1,
+        "h2s": [
+          "Education",
+          "Work Experience",
+          "Projects",
+          "Skills",
+          "Languages",
+          "Certifications"
+        ]
+      },
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 232583,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  },
+  "contemporary:en": {
+    "dom": {
+      "nameOk": true,
+      "links": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ],
+      "mailto": true,
+      "tel": true,
+      "https": true,
+      "imgCount": 1,
+      "lsViolations": 0,
+      "gradient": true,
+      "photoRule": true
+    },
+    "pdf": {
+      "size": 276219,
+      "pages": 1,
+      "links": 6,
+      "hasMail": true,
+      "hasTel": true,
+      "hasHttp": true,
+      "uris": [
+        "mailto:mohammed@example.com",
+        "tel:+963944555123",
+        "https://linkedin.com/in/mohammed",
+        "https://github.com/mohammed",
+        "https://mohammed.dev",
+        "https://github.com/mohammed/jobs"
+      ]
+    }
+  }
+}

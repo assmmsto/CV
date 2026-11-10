@@ -15,7 +15,7 @@ rm -rf "$WORK" && mkdir -p "$WORK/gen" "$WORK/classes" "$WORK/dex"
 # prefer a full JDK when available (JRE lacks javac)
 JAVA_BIN=$(dirname "$(readlink -f "$(command -v java)")")
 if [ ! -x "$JAVA_BIN/javac" ]; then
-  PORT_JDK=$(find /tmp -maxdepth 1 -type d -name "jdk-21*" | head -1)
+  PORT_JDK=$(find /tmp/dl -maxdepth 1 -type d -name "jdk-21*" | head -1)
   [ -x "$PORT_JDK/bin/javac" ] && export PATH="$PORT_JDK/bin:$PATH" && JAVA_BIN="$PORT_JDK/bin"
 fi
 command -v javac >/dev/null || { echo "FATAL: javac not found"; exit 1; }
@@ -37,7 +37,7 @@ echo "[3/9] aapt2 link"
   --java "$WORK/gen" \
   -A android-project/assets \
   --min-sdk-version 24 --target-sdk-version 34 \
-  --version-code 6 --version-name "1.2.2" \
+  --version-code 7 --version-name "1.3.0" \
   --auto-add-overlay
 
 echo "[4/9] javac"

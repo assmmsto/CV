@@ -16,12 +16,22 @@ export interface TemplateMeta {
   chip: [string, string];
 }
 
+/**
+ * Every template embodies a REAL-WORLD documented standard that companies and
+ * job platforms actually accept — see TEMPLATE-RESEARCH.md for the sources
+ * (Harvard FAS/HBS, Jobscan Fortune-500 ATS report, Indeed, Europass EU,
+ * Google Docs templates, Zety/Novoresume hybrid, resume.io student format).
+ * IDs are frozen (stored in users' localStorage + export filenames).
+ */
 export const TEMPLATES: TemplateMeta[] = [
   {
     id: "ats-classic",
-    name: { ar: "الكلاسيكي المعتمد", en: "ATS Classic" },
-    desc: { ar: "عمود واحد بخط سيريف تقليدي — الأكثر توافقاً مع أنظمة الفرز الآلي.", en: "Single column, serif type — the safest choice for ATS parsing." },
-    bestFor: { ar: "الشركات الكبرى وأنظمة التوظيف الآلية", en: "Large companies & ATS platforms" },
+    name: { ar: "هارفارد الرسمي", en: "Harvard Format" },
+    desc: {
+      ar: "نموذج جامعة هارفارد الرسمي: ترويسة مركزية سيريف، سطر تواصل منقّط، تواريخ لليمين، بلا صور أو ألوان.",
+      en: "The official Harvard College/HBS format: centered serif header, dotted contact line, right dates — no color, no photo.",
+    },
+    bestFor: { ar: "الشركات الكبرى والبنوك والمنح الدراسية", en: "Large firms, banks & academia" },
     ats: 100,
     supportsAccent: false,
     component: AtsClassic,
@@ -29,38 +39,50 @@ export const TEMPLATES: TemplateMeta[] = [
   },
   {
     id: "ats-modern",
-    name: { ar: "العصري المعتمد", en: "ATS Modern" },
-    desc: { ar: "عمود واحد بخط Arial واضح وعناوين مميزة — قراءة مثالية من الروبوتات.", en: "Clean Arial layout with clear section rules — ideal robot parsing." },
-    bestFor: { ar: "منصات لينكدإن وبيّانس ومنصات التوظيف", en: "LinkedIn, Bayt & job portals" },
+    name: { ar: "متوافق الفرز الآلي", en: "ATS-Proof (Workday)" },
+    desc: {
+      ar: "مبني على تقرير أنظمة الفرز لدى شركات Fortune 500 (Workday أولًا): عمود واحد، مهارات نص عادي، صفر رسوم — أعلى قراءة آلية.",
+      en: "Built on the Fortune-500 ATS report (Workday-first): one column, plain-text skills, zero graphics — maximum machine parsing.",
+    },
+    bestFor: { ar: "التقديم عبر منصات التوظيف الآلية (Workday وبيّانس ولينكدإن)", en: "Workday, Bayt & LinkedIn portals" },
     ats: 100,
     supportsAccent: false,
     component: AtsModern,
     chip: ["#f4f6f8", "#111111"],
   },
   {
-    id: "executive",
-    name: { ar: "التنفيذي", en: "Executive" },
-    desc: { ar: "ترويسة مركزية أنيقة بخط جورجيا — طابع رسمي للمناصب العليا.", en: "Centered Georgia header — a formal tone for senior roles." },
-    bestFor: { ar: "المناصب الإدارية والاستشارات", en: "Management & consulting" },
+    id: "corporate",
+    name: { ar: "إنديد الرسمي", en: "Indeed Professional" },
+    desc: {
+      ar: "تنسيق Indeed العالمي: شريط ترويسة ملون يجمع الاسم والتواصل، ثم ترتيب Indeed المعتمد (ملخص ← خبرة ← مهارات ← تعليم).",
+      en: "Indeed's global format: colored header band with full contact, then Indeed's trusted order (summary → experience → skills → education).",
+    },
+    bestFor: { ar: "التقديم عبر إنديد والمؤسسات المالية والهندسية", en: "Indeed applications & finance/engineering" },
     ats: 95,
-    supportsAccent: false,
-    component: Executive,
-    chip: ["#f7f7f5", "#1a1a1a"],
+    supportsAccent: true,
+    component: Corporate,
+    chip: ["#1c6dbe", "#ffffff"],
   },
   {
     id: "minimal-pro",
-    name: { ar: "المينيمال", en: "Minimal Pro" },
-    desc: { ar: "مساحات بيضاء واسعة وخطوط رفيعة — عصري وهادئ.", en: "Generous whitespace and hairline rules — calm and modern." },
-    bestFor: { ar: "الشركات التقنية والوكالات الإبداعية", en: "Tech firms & creative agencies" },
+    name: { ar: "جوجل البسيط", en: "Google Simple" },
+    desc: {
+      ar: "أسلوب قوالب Google Docs الرسمية: بساطة قصوى، عناوين رمادية هادئة، مساحات بيضاء واسعة — المفضل في الشركات التقنية.",
+      en: "Modeled on official Google Docs templates: maximal simplicity, calm gray headings, generous whitespace — tech-firm favorite.",
+    },
+    bestFor: { ar: "الشركات التقنية والعمل عن بُعد", en: "Tech firms & remote roles" },
     ats: 95,
     supportsAccent: true,
     component: MinimalPro,
-    chip: ["#fafafa", "#212121"],
+    chip: ["#fafafa", "#333333"],
   },
   {
     id: "modern-sidebar",
-    name: { ar: "الشريط الجانبي", en: "Modern Sidebar" },
-    desc: { ar: "شريط جانبي داكن للمهارات والتواصل — يحافظ على تدفق نصي واضح.", en: "Dark sidebar for skills & contact — still linear text." },
+    name: { ar: "الشريط الحديث", en: "Modern Sidebar" },
+    desc: {
+      ar: "النمط الهجين الشائع على Zety وNovoresume: شريط جانبي داكن للصورة والتواصل والمهارات، وعمود رئيسي للخبرة والتعليم.",
+      en: "The Zety/Novoresume hybrid: dark sidebar for photo, contact and skills; main column for experience and education.",
+    },
     bestFor: { ar: "الشركات الناشئة والمحترفين الشباب", en: "Startups & young professionals" },
     ats: 85,
     supportsAccent: true,
@@ -68,20 +90,13 @@ export const TEMPLATES: TemplateMeta[] = [
     chip: ["#1e293b", "#e2e8f0"],
   },
   {
-    id: "corporate",
-    name: { ar: "الشركات الرسمي", en: "Corporate" },
-    desc: { ar: "ترويسة بلون واحد وحقول منظمة — مظهر مؤسسي متوازن.", en: "Solid header band and tidy blocks — balanced corporate look." },
-    bestFor: { ar: "المؤسسات المالية والهندسية", en: "Finance & engineering firms" },
-    ats: 90,
-    supportsAccent: true,
-    component: Corporate,
-    chip: ["#0f766e", "#ffffff"],
-  },
-  {
     id: "timeline",
-    name: { ar: "المسار الزمني", en: "Timeline Pro" },
-    desc: { ar: "خط زمني بنقاط واضحة يبرز تطور مسارك الوظيفي.", en: "Dotted vertical timeline that highlights career growth." },
-    bestFor: { ar: "ذوي المسار الوظيفي المتصاعد", en: "Progressive career paths" },
+    name: { ar: "المسار المهني", en: "Career Timeline" },
+    desc: {
+      ar: "نمط التدرج الوظيفي (Combination): خط زمني بنقاط يبرز ترقّي المناصب والإنجازات المقيسة بالأرقام.",
+      en: "Combination/progression style: a dotted vertical timeline that highlights promotions and quantified achievements.",
+    },
+    bestFor: { ar: "ذوي المسار الوظيفي المتصاعد والترقيات", en: "Progressive careers & promotions" },
     ats: 85,
     supportsAccent: true,
     component: TimelinePro,
@@ -89,33 +104,55 @@ export const TEMPLATES: TemplateMeta[] = [
   },
   {
     id: "elegant-dark",
-    name: { ar: "الداكن الفخم", en: "Elegant Dark" },
-    desc: { ar: "ترويسة كحلية داكنة بلمسات ذهبية — فخامة وسمعة راسخة.", en: "Navy header with gold accents — luxury and authority." },
-    bestFor: { ar: "الاستشارات والعلامات الفاخرة", en: "Consulting & premium brands" },
+    name: { ar: "يوروباس المعتمد", en: "Europass Standard" },
+    desc: {
+      ar: "نموذج الاتحاد الأوروبي الرسمي Europass: ترويسة شبكية، أشرطة عناوين كحلية، جدول لغات بمرجعية CEFR، وصورة مربعة.",
+      en: "The official EU Europass format: grid header, navy title bars, CEFR language table and a square photo box.",
+    },
+    bestFor: { ar: "المنح الأوروبية والوظائف الدولية والمنظمات", en: "EU scholarships, intl. jobs & NGOs" },
     ats: 90,
     supportsAccent: false,
     component: ElegantDark,
-    chip: ["#101826", "#c9a227"],
+    chip: ["#1f4e79", "#ffffff"],
   },
   {
     id: "compact-pro",
-    name: { ar: "المدمج المحترف", en: "Compact Pro" },
-    desc: { ar: "عمودان مكثفان يختزان أقصى محتوى في أقل مساحة.", en: "Two dense columns packing maximum content per page." },
-    bestFor: { ar: "خبرة 10+ سنوات وسِيَر طويلة", en: "10+ years & long careers" },
+    name: { ar: "الخريج الجديد", en: "Fresh Graduate" },
+    desc: {
+      ar: "نموذج الطالب/الخريج (resume.io وHarvard College): التعليم أولًا، ثم التدريبات، ثم المشاريع والمهارات المجمّعة — صفحة واحدة.",
+      en: "Student/graduate format (resume.io & Harvard College): education first, then internships, projects and grouped skills — one page.",
+    },
+    bestFor: { ar: "الخريجين والطلاب وأصحاب الخبرة القليلة", en: "Graduates, students & juniors" },
     ats: 90,
     supportsAccent: true,
     component: CompactPro,
-    chip: ["#f4f4f5", "#18181b"],
+    chip: ["#f4f9f6", "#14532d"],
   },
   {
     id: "contemporary",
-    name: { ar: "المعاصر", en: "Contemporary" },
-    desc: { ar: "ترويسة متدرجة اللون وشارات مهارات حديثة — جرأة مدروسة.", en: "Gradient header and skill chips — bold but measured." },
-    bestFor: { ar: "التسويق والتصميم والإعلام", en: "Marketing, design & media" },
+    name: { ar: "الإبداعي", en: "Creative Professional" },
+    desc: {
+      ar: "النمط الإبداعي المقبول في مجالات التسويق والتصميم والإعلام (بأسلوب Canva): ترويسة متدرجة وشارات مهارات بمستويات.",
+      en: "The creative style accepted in marketing, design & media (Canva-like): gradient header and leveled skill chips.",
+    },
+    bestFor: { ar: "التسويق والتصميم والإعلام وصناعة المحتوى", en: "Marketing, design & media" },
     ats: 85,
     supportsAccent: true,
     component: Contemporary,
     chip: ["#6d28d9", "#ffffff"],
+  },
+  {
+    id: "executive",
+    name: { ar: "التنفيذي (HBS)", en: "Executive (HBS)" },
+    desc: {
+      ar: "دليل خريجي Harvard Business School: ملخص فقري، كتلة كفاءات أساسية بعمودين، سيريف صغير الحروف الكبيرة وتواريخ مائلة.",
+      en: "HBS Alumni guide: paragraph summary, two-column Core Competencies block, small-caps serif and italic dates.",
+    },
+    bestFor: { ar: "المناصب الإدارية العليا والاستشارات", en: "Senior management & consulting" },
+    ats: 95,
+    supportsAccent: false,
+    component: Executive,
+    chip: ["#f7f7f5", "#1a1a1a"],
   },
 ];
 
