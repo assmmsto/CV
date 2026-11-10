@@ -1,0 +1,540 @@
+     1→import { TemplateProps, pick, dateRange, Bullets, contactItems, CustomSections, FONT_STACKS, ProjectsList, CertsList, LanguageList, MiniIcon, hasSection, tracking } from "./shared";
+     2→import { slabel, levelLabel } from "@/lib/cv/i18n";
+     3→import { CSSProperties } from "react";
+     4→
+     5→/* ============================== 7. CORPORATE ============================== */
+     6→export function Corporate({ data, lang, accent, font, showPhoto }: TemplateProps) {
+     7→  const p = data.personal;
+     8→  const sans = font === "classic" ? FONT_STACKS.classic : FONT_STACKS.modern;
+     9→  const sec: CSSProperties = {
+    10→    fontSize: "12pt", fontWeight: 700, color: accent, margin: "0 0 6pt",
+    11→    display: "flex", alignItems: "center", gap: 8,
+    12→  };
+    13→  const entry: CSSProperties = { marginBottom: "9pt", breakInside: "avoid" };
+    14→
+    15→  const heading = (t: string) => (
+    16→    <h2 style={sec}>
+    17→      {t}
+    18→      <span style={{ flex: 1, height: 1.5, background: accent, opacity: 0.35 }} />
+    19→    </h2>
+    20→  );
+    21→
+    22→  return (
+    23→    <div dir={lang === "ar" ? "rtl" : "ltr"} style={{ fontFamily: sans, background: "#fff", color: "#222", textAlign: "start" }}>
+    24→      <header style={{ background: accent, color: "#fff", padding: "9mm 15mm", display: "flex", alignItems: "center", gap: 12 }}>
+    25→        <div style={{ flex: 1, minWidth: 0 }}>
+    26→          <h1 style={{ fontSize: "23pt", fontWeight: 800, margin: 0, letterSpacing: tracking(lang, "0.5px") }}>
+    27→            {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
+    28→          </h1>
+    29→          {pick(p.jobTitle, lang) && <p style={{ fontSize: "13pt", margin: "3pt 0 7pt", opacity: 0.92 }}>{pick(p.jobTitle, lang)}</p>}
+    30→          <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 18px", fontSize: "9.5pt", opacity: 0.95 }}>
+    31→            {contactItems(data, lang).map((it, i) => (
+    32→              <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+    33→                <MiniIcon name={it.icon} size={11} style={{ color: "#fff" }} />
+    34→                {it.href ? (
+    35→                  <a href={it.href} style={{ color: "inherit", textDecoration: "underline" }}>
+    36→                    {it.value}
+    37→                  </a>
+    38→                ) : (
+    39→                  it.value
+    40→                )}
+    41→              </span>
+    42→            ))}
+    43→          </div>
+    44→        </div>
+    45→        {showPhoto && p.photo && (
+    46→          /* eslint-disable-next-line @next/next/no-img-element */
+    47→          <img
+    48→            src={p.photo}
+    49→            alt=""
+    50→            style={{ width: 82, height: 82, borderRadius: "50%", objectFit: "cover", border: "3px solid rgba(255,255,255,0.85)", flexShrink: 0 }}
+    51→          />
+    52→        )}
+    53→      </header>
+    54→
+    55→      <div style={{ padding: "8mm 15mm" }}>
+    56→        {hasSection(data, "summary") && (
+    57→          <section style={{ marginBottom: 12 }}>
+    58→            {heading(slabel("summary", lang))}
+    59→            <p style={{ margin: 0, lineHeight: 1.55, fontSize: "10pt" }}>{pick(p.summary, lang)}</p>
+    60→          </section>
+    61→        )}
+    62→
+    63→        {data.experience.length > 0 && (
+    64→          <section style={{ marginBottom: 12 }}>
+    65→            {heading(slabel("experience", lang))}
+    66→            {data.experience.map((e) => (
+    67→              <div key={e.id} style={{ ...entry, borderInlineStart: `2.5px solid ${accent}`, paddingInlineStart: 10 }}>
+    68→                <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+    69→                  <span style={{ fontWeight: 700, fontSize: "11.5pt", color: "#111" }}>{pick(e.position, lang)}</span>
+    70→                  <span style={{ whiteSpace: "nowrap", color: accent, fontWeight: 600, fontSize: "9.8pt" }}>{dateRange(e.startDate, e.endDate, e.current, lang)}</span>
+    71→                </div>
+    72→                <div style={{ fontSize: "10pt", color: "#444" }}>{pick(e.company, lang)}{pick(e.city, lang) ? ` — ${pick(e.city, lang)}` : ""}</div>
+    73→                <div style={{ marginTop: 3 }}>
+    74→                  <Bullets text={pick(e.description, lang)} style={{ fontSize: "9.8pt" }} />
+    75→                </div>
+    76→              </div>
+    77→            ))}
+    78→          </section>
+    79→        )}
+    80→
+    81→        {data.education.length > 0 && (
+    82→          <section style={{ marginBottom: 12 }}>
+    83→            {heading(slabel("education", lang))}
+    84→            {data.education.map((ed) => (
+    85→              <div key={ed.id} style={{ ...entry, borderInlineStart: `2.5px solid ${accent}`, paddingInlineStart: 10 }}>
+    86→                <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+    87→                  <span style={{ fontWeight: 700, fontSize: "11pt", color: "#111" }}>{pick(ed.degree, lang)}{pick(ed.field, lang) ? ` — ${pick(ed.field, lang)}` : ""}</span>
+    88→                  <span style={{ whiteSpace: "nowrap", color: accent, fontWeight: 600, fontSize: "9.8pt" }}>{dateRange(ed.startDate, ed.endDate, ed.current, lang)}</span>
+    89→                </div>
+    90→                <div style={{ fontSize: "10pt", color: "#444" }}>{pick(ed.institution, lang)}{pick(ed.grade, lang) ? ` — ${pick(ed.grade, lang)}` : ""}</div>
+    91→              </div>
+    92→            ))}
+    93→          </section>
+    94→        )}
+    95→
+    96→        {data.skills.length > 0 && (
+    97→          <section style={{ marginBottom: 12 }}>
+    98→            {heading(slabel("skills", lang))}
+    99→            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "5px 16px", fontSize: "10pt" }}>
+   100→              {data.skills.map((s) => (
+   101→                <div key={s.id} style={{ display: "flex", gap: 6, alignItems: "baseline" }}>
+   102→                  <span style={{ color: accent, fontWeight: 700 }}>▪</span>
+   103→                  <span>{pick(s.name, lang)}</span>
+   104→                </div>
+   105→              ))}
+   106→            </div>
+   107→          </section>
+   108→        )}
+   109→
+   110→        {data.languages.length > 0 && (
+   111→          <section style={{ marginBottom: 12 }}>
+   112→            {heading(slabel("languages", lang))}
+   113→            <LanguageList data={data} lang={lang} />
+   114→          </section>
+   115→        )}
+   116→
+   117→        {data.certifications.length > 0 && (
+   118→          <section style={{ marginBottom: 12 }}>
+   119→            {heading(slabel("certifications", lang))}
+   120→            <CertsList data={data} lang={lang} />
+   121→          </section>
+   122→        )}
+   123→
+   124→        {data.projects.length > 0 && (
+   125→          <section style={{ marginBottom: 12 }}>
+   126→            {heading(slabel("projects", lang))}
+   127→            <ProjectsList data={data} lang={lang} />
+   128→          </section>
+   129→        )}
+   130→
+   131→        <CustomSections data={data} lang={lang} heading={heading} />
+   132→      </div>
+   133→    </div>
+   134→  );
+   135→}
+   136→
+   137→/* ============================== 8. ELEGANT DARK ============================== */
+   138→export function ElegantDark({ data, lang, accent, font }: TemplateProps) {
+   139→  const p = data.personal;
+   140→  const serif = font === "modern" ? FONT_STACKS.modern : FONT_STACKS.mixed;
+   141→  const dark = "#101826";
+   142→  const gold = "#c9a227";
+   143→  const sec: CSSProperties = {
+   144→    fontSize: "11.5pt", fontWeight: 700, color: gold, letterSpacing: tracking(lang, "1px"), textTransform: "uppercase",
+   145→    margin: "0 0 7pt", display: "flex", alignItems: "center", gap: 10,
+   146→  };
+   147→  const entry: CSSProperties = { marginBottom: "10pt", breakInside: "avoid" };
+   148→
+   149→  const heading = (t: string) => (
+   150→    <h2 style={sec}>
+   151→      {t}
+   152→      <span style={{ flex: 1, height: 1, background: `linear-gradient(${lang === "ar" ? "to left" : "to right"}, ${gold}, transparent)` }} />
+   153→    </h2>
+   154→  );
+   155→
+   156→  return (
+   157→    <div dir={lang === "ar" ? "rtl" : "ltr"} style={{ fontFamily: serif, background: "#fff", color: "#1e2430", textAlign: "start" }}>
+   158→      <header style={{ background: dark, color: "#fff", padding: "12mm 15mm 10mm", textAlign: "center" }}>
+   159→        {p.photo && (
+   160→          <div style={{ marginBottom: 8, textAlign: "center" }}>
+   161→            {/* eslint-disable-next-line @next/next/no-img-element */}
+   162→            <img src={p.photo} alt="" style={{ width: 78, height: 78, borderRadius: "50%", objectFit: "cover", border: `2.5px solid ${gold}` }} />
+   163→          </div>
+   164→        )}
+   165→        <h1 style={{ fontSize: "25pt", fontWeight: 700, margin: 0, letterSpacing: tracking(lang, "2px"), color: "#fff" }}>
+   166→          {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
+   167→        </h1>
+   168→        {pick(p.jobTitle, lang) && (
+   169→          <p style={{ fontSize: "12.5pt", margin: "6pt auto 9pt", color: gold, letterSpacing: tracking(lang, "3px") }}>{pick(p.jobTitle, lang)}</p>
+   170→        )}
+   171→        <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "4px 16px", fontSize: "9.3pt", color: "#c8cfdb" }}>
+   172→          {contactItems(data, lang).map((it, i) => (
+   173→            <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+   174→              <MiniIcon name={it.icon} size={11} style={{ color: gold }} />
+   175→              {it.href ? (
+   176→                  <a href={it.href} style={{ color: "inherit", textDecoration: "underline" }}>
+   177→                    {it.value}
+   178→                  </a>
+   179→                ) : (
+   180→                  it.value
+   181→                )}
+   182→            </span>
+   183→          ))}
+   184→        </div>
+   185→        <div style={{ width: 70, height: 2, background: gold, margin: "9pt auto 0" }} />
+   186→      </header>
+   187→
+   188→      <div style={{ padding: "9mm 15mm" }}>
+   189→        {hasSection(data, "summary") && (
+   190→          <section style={{ marginBottom: 13 }}>
+   191→            {heading(slabel("summary", lang))}
+   192→            <p style={{ margin: 0, lineHeight: 1.6, fontSize: "10.3pt", textAlign: "justify" }}>{pick(p.summary, lang)}</p>
+   193→          </section>
+   194→        )}
+   195→
+   196→        {data.experience.length > 0 && (
+   197→          <section style={{ marginBottom: 13 }}>
+   198→            {heading(slabel("experience", lang))}
+   199→            {data.experience.map((e) => (
+   200→              <div key={e.id} style={entry}>
+   201→                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
+   202→                  <span style={{ fontWeight: 700, fontSize: "11.8pt", color: dark }}>{pick(e.position, lang)}</span>
+   203→                  <span style={{ color: gold, fontWeight: 600, fontSize: "9.6pt", whiteSpace: "nowrap" }}>{dateRange(e.startDate, e.endDate, e.current, lang)}</span>
+   204→                </div>
+   205→                <div style={{ fontSize: "10.3pt", color: "#475066", fontStyle: "italic" }}>{pick(e.company, lang)}{pick(e.city, lang) ? ` — ${pick(e.city, lang)}` : ""}</div>
+   206→                <div style={{ marginTop: 3 }}>
+   207→                  <Bullets text={pick(e.description, lang)} style={{ fontSize: "9.9pt" }} bulletStyle={{ color: gold }} />
+   208→                </div>
+   209→              </div>
+   210→            ))}
+   211→          </section>
+   212→        )}
+   213→
+   214→        {data.education.length > 0 && (
+   215→          <section style={{ marginBottom: 13 }}>
+   216→            {heading(slabel("education", lang))}
+   217→            {data.education.map((ed) => (
+   218→              <div key={ed.id} style={entry}>
+   219→                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
+   220→                  <span style={{ fontWeight: 700, fontSize: "11.3pt", color: dark }}>{pick(ed.degree, lang)}{pick(ed.field, lang) ? ` — ${pick(ed.field, lang)}` : ""}</span>
+   221→                  <span style={{ color: gold, fontWeight: 600, fontSize: "9.6pt", whiteSpace: "nowrap" }}>{dateRange(ed.startDate, ed.endDate, ed.current, lang)}</span>
+   222→                </div>
+   223→                <div style={{ fontSize: "10.3pt", color: "#475066" }}>{pick(ed.institution, lang)}{pick(ed.grade, lang) ? ` — ${pick(ed.grade, lang)}` : ""}</div>
+   224→              </div>
+   225→            ))}
+   226→          </section>
+   227→        )}
+   228→
+   229→        {data.skills.length > 0 && (
+   230→          <section style={{ marginBottom: 13 }}>
+   231→            {heading(slabel("skills", lang))}
+   232→            <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+   233→              {data.skills.map((s) => (
+   234→                <span key={s.id} style={{ border: `1px solid ${gold}`, color: dark, padding: "3px 10px", fontSize: "9.4pt", borderRadius: 2 }}>
+   235→                  {pick(s.name, lang)}
+   236→                </span>
+   237→              ))}
+   238→            </div>
+   239→          </section>
+   240→        )}
+   241→
+   242→        {data.languages.length > 0 && (
+   243→          <section style={{ marginBottom: 13 }}>
+   244→            {heading(slabel("languages", lang))}
+   245→            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 22px", fontSize: "10.2pt" }}>
+   246→              {data.languages.map((l) => (
+   247→                <span key={l.id}>{pick(l.name, lang)} <span style={{ color: gold }}>{levelLabel(l.level, lang)}</span></span>
+   248→              ))}
+   249→            </div>
+   250→          </section>
+   251→        )}
+   252→
+   253→        {data.certifications.length > 0 && (
+   254→          <section style={{ marginBottom: 13 }}>
+   255→            {heading(slabel("certifications", lang))}
+   256→            <CertsList data={data} lang={lang} />
+   257→          </section>
+   258→        )}
+   259→
+   260→        {data.projects.length > 0 && (
+   261→          <section style={{ marginBottom: 13 }}>
+   262→            {heading(slabel("projects", lang))}
+   263→            <ProjectsList data={data} lang={lang} nameStyle={{ color: dark }} />
+   264→          </section>
+   265→        )}
+   266→
+   267→        <CustomSections data={data} lang={lang} heading={heading} />
+   268→      </div>
+   269→    </div>
+   270→  );
+   271→}
+   272→
+   273→/* ============================== 9. TIMELINE PRO ============================== */
+   274→export function TimelinePro({ data, lang, accent, font, showPhoto }: TemplateProps) {
+   275→  const p = data.personal;
+   276→  const sans = font === "classic" ? FONT_STACKS.classic : FONT_STACKS.modern;
+   277→  const sec: CSSProperties = { fontSize: "12pt", fontWeight: 700, color: accent, margin: "0 0 8pt", textTransform: "uppercase", letterSpacing: tracking(lang, "1.5px") };
+   278→  const heading = (t: string) => <h2 style={sec}>{t}</h2>;
+   279→
+   280→  return (
+   281→    <div dir={lang === "ar" ? "rtl" : "ltr"} style={{ padding: "12mm 14mm", fontFamily: sans, color: "#24303f", textAlign: "start" }}>
+   282→      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, borderBottom: `3px solid ${accent}`, paddingBottom: 9, marginBottom: 12 }}>
+   283→        <div>
+   284→          <h1 style={{ fontSize: "22pt", fontWeight: 800, margin: 0, color: accent, lineHeight: 1.15 }}>
+   285→            {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
+   286→          </h1>
+   287→          {pick(p.jobTitle, lang) && <p style={{ fontSize: "12.5pt", margin: "3pt 0 0", color: "#4b5563" }}>{pick(p.jobTitle, lang)}</p>}
+   288→        </div>
+   289→        <div style={{ fontSize: "9.3pt", color: "#4b5563", display: "grid", gap: 3, textAlign: "end" }}>
+   290→          {contactItems(data, lang).map((it, i) => (
+   291→            <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 5, justifyContent: "flex-end" }}>
+   292→              <MiniIcon name={it.icon} size={11} style={{ color: accent }} />
+   293→              {it.href ? (
+   294→                  <a href={it.href} style={{ color: "inherit", textDecoration: "underline" }}>
+   295→                    {it.value}
+   296→                  </a>
+   297→                ) : (
+   298→                  it.value
+   299→                )}
+   300→            </span>
+   301→          ))}
+   302→        </div>
+   303→        {showPhoto && p.photo && (
+   304→          /* eslint-disable-next-line @next/next/no-img-element */
+   305→          <img
+   306→            src={p.photo}
+   307→            alt=""
+   308→            style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", border: `3px solid ${accent}`, flexShrink: 0 }}
+   309→          />
+   310→        )}
+   311→      </header>
+   312→
+   313→      {hasSection(data, "summary") && (
+   314→        <section style={{ marginBottom: 13 }}>
+   315→          {heading(slabel("summary", lang))}
+   316→          <p style={{ margin: 0, lineHeight: 1.55, fontSize: "10.2pt" }}>{pick(p.summary, lang)}</p>
+   317→        </section>
+   318→      )}
+   319→
+   320→      {data.experience.length > 0 && (
+   321→        <section style={{ marginBottom: 13 }}>
+   322→          {heading(slabel("experience", lang))}
+   323→          <div style={{ borderInlineStart: `2px solid ${accent}`, marginInlineStart: 5, paddingInlineStart: 14, display: "grid", gap: 11 }}>
+   324→            {data.experience.map((e) => (
+   325→              <div key={e.id} style={{ position: "relative", breakInside: "avoid" }}>
+   326→                <span style={{ position: "absolute", insetInlineStart: -19.5, top: 4, width: 9, height: 9, borderRadius: "50%", background: "#fff", border: `2.5px solid ${accent}` }} />
+   327→                <div style={{ display: "inline-block", background: `${accent}14`, color: accent, fontSize: "8.8pt", fontWeight: 700, padding: "1px 8px", borderRadius: 99 }}>
+   328→                  {dateRange(e.startDate, e.endDate, e.current, lang)}
+   329→                </div>
+   330→                <div style={{ fontWeight: 700, fontSize: "11.5pt", color: "#1f2937", marginTop: 2 }}>{pick(e.position, lang)}</div>
+   331→                <div style={{ fontSize: "10pt", color: "#4b5563" }}>{pick(e.company, lang)}{pick(e.city, lang) ? ` — ${pick(e.city, lang)}` : ""}</div>
+   332→                <div style={{ marginTop: 2 }}>
+   333→                  <Bullets text={pick(e.description, lang)} style={{ fontSize: "9.8pt" }} />
+   334→                </div>
+   335→              </div>
+   336→            ))}
+   337→          </div>
+   338→        </section>
+   339→      )}
+   340→
+   341→      {data.education.length > 0 && (
+   342→        <section style={{ marginBottom: 13 }}>
+   343→          {heading(slabel("education", lang))}
+   344→          <div style={{ borderInlineStart: `2px solid ${accent}`, marginInlineStart: 5, paddingInlineStart: 14, display: "grid", gap: 9 }}>
+   345→            {data.education.map((ed) => (
+   346→              <div key={ed.id} style={{ position: "relative", breakInside: "avoid" }}>
+   347→                <span style={{ position: "absolute", insetInlineStart: -19.5, top: 4, width: 9, height: 9, borderRadius: "50%", background: "#fff", border: `2.5px solid ${accent}` }} />
+   348→                <span style={{ display: "inline-block", background: `${accent}14`, color: accent, fontSize: "8.8pt", fontWeight: 700, padding: "1px 8px", borderRadius: 99 }}>
+   349→                  {dateRange(ed.startDate, ed.endDate, ed.current, lang)}
+   350→                </span>
+   351→                <div style={{ fontWeight: 700, fontSize: "11pt", color: "#1f2937" }}>{pick(ed.degree, lang)}{pick(ed.field, lang) ? ` — ${pick(ed.field, lang)}` : ""}</div>
+   352→                <div style={{ fontSize: "10pt", color: "#4b5563" }}>{pick(ed.institution, lang)}{pick(ed.grade, lang) ? ` — ${pick(ed.grade, lang)}` : ""}</div>
+   353→              </div>
+   354→            ))}
+   355→          </div>
+   356→        </section>
+   357→      )}
+   358→
+   359→      {data.skills.length > 0 && (
+   360→        <section style={{ marginBottom: 13 }}>
+   361→          {heading(slabel("skills", lang))}
+   362→          <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+   363→            {data.skills.map((s) => (
+   364→              <span key={s.id} style={{ background: `${accent}12`, border: `1px solid ${accent}55`, padding: "3px 10px", borderRadius: 4, fontSize: "9.6pt" }}>
+   365→                {pick(s.name, lang)}
+   366→              </span>
+   367→            ))}
+   368→          </div>
+   369→        </section>
+   370→      )}
+   371→
+   372→      {data.languages.length > 0 && (
+   373→        <section style={{ marginBottom: 13 }}>
+   374→          {heading(slabel("languages", lang))}
+   375→          <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 20px", fontSize: "10.2pt" }}>
+   376→            {data.languages.map((l) => (
+   377→              <span key={l.id}>{pick(l.name, lang)} <span style={{ color: accent }}>{levelLabel(l.level, lang)}</span></span>
+   378→            ))}
+   379→          </div>
+   380→        </section>
+   381→      )}
+   382→
+   383→      {data.certifications.length > 0 && (
+   384→        <section style={{ marginBottom: 13 }}>
+   385→          {heading(slabel("certifications", lang))}
+   386→          <CertsList data={data} lang={lang} />
+   387→        </section>
+   388→      )}
+   389→
+   390→      {data.projects.length > 0 && (
+   391→        <section style={{ marginBottom: 13 }}>
+   392→          {heading(slabel("projects", lang))}
+   393→          <ProjectsList data={data} lang={lang} nameStyle={{ color: "#1f2937" }} />
+   394→        </section>
+   395→      )}
+   396→
+   397→      <CustomSections data={data} lang={lang} heading={heading} />
+   398→    </div>
+   399→  );
+   400→}
+   401→
+   402→/* ============================== 10. CONTEMPORARY ============================== */
+   403→export function Contemporary({ data, lang, accent, showPhoto, font }: TemplateProps) {
+   404→  const p = data.personal;
+   405→  const sans = font === "classic" ? FONT_STACKS.classic : FONT_STACKS.modern;
+   406→  const sec: CSSProperties = {
+   407→    fontSize: "12.5pt", fontWeight: 800, margin: "0 0 8pt", display: "flex", alignItems: "center", gap: 8, color: "#111",
+   408→  };
+   409→  const heading = (t: string) => (
+   410→    <h2 style={sec}>
+   411→      <span style={{ width: 10, height: 10, borderRadius: 3, background: accent, display: "inline-block", flexShrink: 0 }} />
+   412→      {t}
+   413→    </h2>
+   414→  );
+   415→
+   416→  return (
+   417→    <div dir={lang === "ar" ? "rtl" : "ltr"} style={{ fontFamily: sans, background: "#fff", color: "#262626", textAlign: "start" }}>
+   418→      <header style={{
+   419→        background: `linear-gradient(120deg, ${accent}, ${accent}cc 60%, ${accent}88)`,
+   420→        color: "#fff", padding: "11mm 14mm", display: "flex", alignItems: "center", gap: 14,
+   421→      }}>
+   422→        {showPhoto && p.photo && (
+   423→          /* eslint-disable-next-line @next/next/no-img-element */
+   424→          <img src={p.photo} alt="" style={{ width: 74, height: 74, borderRadius: 16, objectFit: "cover", border: "3px solid rgba(255,255,255,0.7)", flexShrink: 0 }} />
+   425→        )}
+   426→        <div style={{ minWidth: 0 }}>
+   427→          <h1 style={{ fontSize: "24pt", fontWeight: 800, margin: 0, lineHeight: 1.15 }}>
+   428→            {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
+   429→          </h1>
+   430→          {pick(p.jobTitle, lang) && <p style={{ fontSize: "12.5pt", margin: "3pt 0 0", opacity: 0.9, fontWeight: 500 }}>{pick(p.jobTitle, lang)}</p>}
+   431→          <div style={{ display: "flex", flexWrap: "wrap", gap: "3px 14px", fontSize: "9pt", marginTop: 7, opacity: 0.95 }}>
+   432→            {contactItems(data, lang).map((it, i) => (
+   433→              <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+   434→                <MiniIcon name={it.icon} size={10} style={{ color: "#fff" }} />
+   435→                {it.href ? (
+   436→                  <a href={it.href} style={{ color: "inherit", textDecoration: "underline" }}>
+   437→                    {it.value}
+   438→                  </a>
+   439→                ) : (
+   440→                  it.value
+   441→                )}
+   442→              </span>
+   443→            ))}
+   444→          </div>
+   445→        </div>
+   446→      </header>
+   447→
+   448→      <div style={{ padding: "9mm 14mm" }}>
+   449→        {hasSection(data, "summary") && (
+   450→          <section style={{ marginBottom: 13 }}>
+   451→            {heading(slabel("summary", lang))}
+   452→            <p style={{ margin: 0, lineHeight: 1.6, fontSize: "10.3pt", background: "#fafafa", padding: "10px 12px", borderRadius: 8, borderInlineStart: `3px solid ${accent}` }}>
+   453→              {pick(p.summary, lang)}
+   454→            </p>
+   455→          </section>
+   456→        )}
+   457→
+   458→        {data.experience.length > 0 && (
+   459→          <section style={{ marginBottom: 13 }}>
+   460→            {heading(slabel("experience", lang))}
+   461→            {data.experience.map((e) => (
+   462→              <div key={e.id} style={{ marginBottom: 10, breakInside: "avoid" }}>
+   463→                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
+   464→                  <div style={{ fontWeight: 800, fontSize: "11.5pt", color: "#111" }}>{pick(e.position, lang)}</div>
+   465→                  <div style={{ fontSize: "9pt", fontWeight: 700, color: accent, whiteSpace: "nowrap", background: `${accent}10`, padding: "2px 9px", borderRadius: 99 }}>
+   466→                    {dateRange(e.startDate, e.endDate, e.current, lang)}
+   467→                  </div>
+   468→                </div>
+   469→                <div style={{ fontSize: "10pt", color: "#555", marginTop: 1 }}>
+   470→                  {pick(e.company, lang)}{pick(e.city, lang) ? ` — ${pick(e.city, lang)}` : ""}
+   471→                </div>
+   472→                <div style={{ marginTop: 3 }}>
+   473→                  <Bullets text={pick(e.description, lang)} style={{ fontSize: "9.8pt" }} bulletStyle={{ color: accent }} />
+   474→                </div>
+   475→              </div>
+   476→            ))}
+   477→          </section>
+   478→        )}
+   479→
+   480→        {data.education.length > 0 && (
+   481→          <section style={{ marginBottom: 13 }}>
+   482→            {heading(slabel("education", lang))}
+   483→            {data.education.map((ed) => (
+   484→              <div key={ed.id} style={{ marginBottom: 8, breakInside: "avoid", display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" }}>
+   485→                <div>
+   486→                  <span style={{ fontWeight: 800, fontSize: "11pt", color: "#111" }}>{pick(ed.degree, lang)}{pick(ed.field, lang) ? ` — ${pick(ed.field, lang)}` : ""}</span>
+   487→                  <span style={{ fontSize: "10pt", color: "#555" }}> · {pick(ed.institution, lang)}{pick(ed.grade, lang) ? ` · ${pick(ed.grade, lang)}` : ""}</span>
+   488→                </div>
+   489→                <div style={{ fontSize: "9pt", fontWeight: 700, color: accent, whiteSpace: "nowrap" }}>{dateRange(ed.startDate, ed.endDate, ed.current, lang)}</div>
+   490→              </div>
+   491→            ))}
+   492→          </section>
+   493→        )}
+   494→
+   495→        {data.skills.length > 0 && (
+   496→          <section style={{ marginBottom: 13 }}>
+   497→            {heading(slabel("skills", lang))}
+   498→            <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+   499→              {data.skills.map((s) => (
+   500→                <span key={s.id} style={{ background: accent, color: "#fff", padding: "4px 12px", borderRadius: 99, fontSize: "9.4pt", fontWeight: 600 }}>
+   501→                  {pick(s.name, lang)}
+   502→                </span>
+   503→              ))}
+   504→            </div>
+   505→          </section>
+   506→        )}
+   507→
+   508→        {data.languages.length > 0 && (
+   509→          <section style={{ marginBottom: 13 }}>
+   510→            {heading(slabel("languages", lang))}
+   511→            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+   512→              {data.languages.map((l) => (
+   513→                <span key={l.id} style={{ border: `1.5px solid ${accent}66`, borderRadius: 8, padding: "4px 10px", fontSize: "9.6pt" }}>
+   514→                  {pick(l.name, lang)} <span style={{ color: accent, fontWeight: 700 }}>{levelLabel(l.level, lang)}</span>
+   515→                </span>
+   516→              ))}
+   517→            </div>
+   518→          </section>
+   519→        )}
+   520→
+   521→        {data.certifications.length > 0 && (
+   522→          <section style={{ marginBottom: 13 }}>
+   523→            {heading(slabel("certifications", lang))}
+   524→            <CertsList data={data} lang={lang} />
+   525→          </section>
+   526→        )}
+   527→
+   528→        {data.projects.length > 0 && (
+   529→          <section style={{ marginBottom: 13 }}>
+   530→            {heading(slabel("projects", lang))}
+   531→            <ProjectsList data={data} lang={lang} nameStyle={{ color: "#111" }} />
+   532→          </section>
+   533→        )}
+   534→
+   535→        <CustomSections data={data} lang={lang} heading={heading} />
+   536→      </div>
+   537→    </div>
+   538→  );
+   539→}
+   540→
