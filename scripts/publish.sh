@@ -21,7 +21,7 @@ echo "[2/3] GitHub Pages will rebuild automatically (source: main /docs)."
 echo "      Wait ~1-2 minutes, then check:"
 echo "      - Download page : https://assmmsto.github.io/CV/"
 echo "      - Web app       : https://assmmsto.github.io/CV/app/"
-echo "      - APK           : https://assmmsto.github.io/CV/cv-studio.apk  (v1.2.0)"
+echo "      - APK           : https://assmmsto.github.io/CV/cv-studio.apk  (v1.2.1)"
 
 echo ""
 echo "[3/3] verifying live deployment..."

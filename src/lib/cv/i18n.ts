@@ -195,8 +195,8 @@ export const dict = {
   // Preview & export
   downloadPdf: { ar: "تنزيل PDF", en: "Download PDF" },
   pdfHint: {
-    ar: "في نافذة الطباعة اختر «حفظ كملف PDF» وألغِ خيار الرؤوس والتذييلات.",
-    en: "In the print dialog choose 'Save as PDF' and disable headers/footers.",
+    ar: "اضغط «تنزيل PDF» فيُحفظ الملف مباشرة في جهازك — بدون نوافذ طباعة ويعمل دون اتصال.",
+    en: "Tap \"Download PDF\" and the file saves directly to your device — no print dialog, works offline.",
   },
   zoom: { ar: "تكبير", en: "Zoom" },
   exportJson: { ar: "نسخة احتياطية (JSON)", en: "Backup (JSON)" },

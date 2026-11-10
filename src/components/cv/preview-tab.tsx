@@ -8,6 +8,11 @@ import { Download, ZoomIn, ZoomOut, Printer, ShieldCheck, Loader2 } from "lucide
 import { useState } from "react";
 import { getTemplate } from "./templates/registry";
 import { toast } from "@/hooks/use-toast";
+import {
+  generateTemplatePdf,
+  saveBlobEverywhere,
+} from "@/lib/cv/client-pdf";
+import { exportBaseName, safeFileName } from "@/lib/cv/export-names";
 import type { Lang } from "@/lib/cv/types";
 
 export function PreviewTab({ lang }: { lang: Lang }) {
@@ -25,41 +30,41 @@ export function PreviewTab({ lang }: { lang: Lang }) {
   const pct = completeness(data);
   const meta = getTemplate(templateId);
 
-  /** Real server-side PDF generation; falls back to browser print. */
+  /** 100% client-side PDF — instant download, works offline (Pages & APK). */
   const downloadPdf = async () => {
     if (busy) return;
     setBusy(true);
     try {
-      const res = await fetch("/api/export/pdf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      let blob: Blob;
+      try {
+        blob = await generateTemplatePdf({
+          templateId,
           data,
           lang: cvLang,
-          templates: [templateId],
           accent,
           showPhoto,
           font: fontChoice,
-        }),
-      });
-      if (!res.ok) throw new Error(String(res.status));
-      const blob = await res.blob();
-      const disposition = res.headers.get("Content-Disposition") ?? "";
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = meta.name.en
-        ? `${data.personal.fullName.en || data.personal.fullName.ar || "CV"} - ${meta.name.en}.pdf`
-        : "CV.pdf";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 4000);
-      toast({ title: dict.generatedOne[lang] });
-    } catch {
+        });
+      } catch {
+        // one automatic retry at lower resolution — never a print window
+        blob = await generateTemplatePdf({
+          templateId,
+          data,
+          lang: cvLang,
+          accent,
+          showPhoto,
+          font: fontChoice,
+          scale: 1,
+        });
+      }
+      const base = exportBaseName(data, cvLang);
+      const name = `${base}-CV-${safeFileName(meta.name.en || templateId)}.pdf`;
+      const via = await saveBlobEverywhere(blob, name, "application/pdf");
+      if (via === "bridge") toast({ title: dict.savedApk[lang] });
+      toast({ title: dict.generatedOne[lang], description: meta.name[lang] });
+    } catch (e) {
+      console.error("preview client pdf failed:", e);
       toast({ title: dict.exportFailed[lang], variant: "destructive" });
-      // Offline / API unavailable — the print pipeline still produces a clean PDF.
-      window.print();
     } finally {
       setBusy(false);
     }

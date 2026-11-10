@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, Button } from "@/components/u
 import { User, Wand2, Loader2, Camera, Trash2, ImageIcon } from "lucide-react";
 import { useState, useRef } from "react";
 import { BiText, PersonalInfo, Lang } from "@/lib/cv/types";
+import { toast } from "@/hooks/use-toast";
 
 interface TranslateAPIResponse {
   ok: boolean;
@@ -97,7 +98,8 @@ export function PersonalSection({ lang }: { lang: Lang }) {
       }
       updatePersonal(nextEn);
     } catch {
-      // keep the UI stable; user can retry
+      // visible feedback instead of a silent dead button (no /api on Pages/APK)
+      toast({ title: dict.translateFailed[lang], variant: "destructive" });
     } finally {
       setTranslating(false);
     }
