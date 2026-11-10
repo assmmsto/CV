@@ -23,7 +23,22 @@ export function CvSheet({ zoom = 1 }: { zoom?: number }) {
   const fontChoice = useCVStore((s) => s.fontChoice);
 
   return (
-    <div className="cv-sheet" style={{ zoom }} dir={cvLang === "ar" ? "rtl" : "ltr"}>
+    <div
+      className="cv-sheet"
+      style={{ zoom }}
+      dir={cvLang === "ar" ? "rtl" : "ltr"}
+      /* links are real <a> so PDFs get clickable annotations; in the on-screen
+         preview, open them in a new tab instead of navigating the app away */
+      onClickCapture={(e) => {
+        const a = (e.target as HTMLElement).closest?.("a");
+        if (!a) return;
+        const href = a.getAttribute("href") || "";
+        if (!href || href.startsWith("#")) return;
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(href, "_blank", "noopener");
+      }}
+    >
       <TemplateRenderer
         templateId={templateId}
         data={data}

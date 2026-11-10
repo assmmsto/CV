@@ -12,6 +12,7 @@
 
 import { createRoot, Root } from "react-dom/client";
 import { TemplateRenderer } from "@/components/cv/templates/registry";
+import { normalizeHref } from "@/components/cv/templates/shared";
 import { useCVStore } from "./store";
 import type { CVData, Lang } from "./types";
 
@@ -64,6 +65,33 @@ function waitForImages(scope: HTMLElement): Promise<void> {
   });
 }
 
+const ARABIC_CHAR = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+/**
+ * Safety net for Arabic shaping: html2canvas-pro falls back to glyph-by-glyph
+ * drawing whenever a text element has letter-spacing ≠ 0, which renders
+ * disconnected (isolated-form) Arabic letters in the PDF. Any element whose
+ * own text contains Arabic is forced back to `letter-spacing: normal` before
+ * the canvas capture (tracking() in the templates already does this at the
+ * source; this guards future templates / inline styles).
+ */
+function neutralizeArabicLetterSpacing(scope: HTMLElement) {
+  const els: Element[] = [scope, ...Array.from(scope.querySelectorAll("*"))];
+  for (const el of els) {
+    if (!(el instanceof HTMLElement)) continue;
+    let ownHasArabic = false;
+    for (const n of Array.from(el.childNodes)) {
+      if (n.nodeType === Node.TEXT_NODE && ARABIC_CHAR.test(n.textContent ?? "")) {
+        ownHasArabic = true;
+        break;
+      }
+    }
+    if (!ownHasArabic) continue;
+    const ls = getComputedStyle(el).letterSpacing;
+    if (ls && ls !== "0px" && ls !== "normal") el.style.letterSpacing = "normal";
+  }
+}
+
 /**
  * Render one template offscreen at true A4 proportions and return a PDF Blob.
  * Throws on failure so callers can fall back to the print dialog.
@@ -111,6 +139,7 @@ export async function generateTemplatePdf(job: PdfJob): Promise<Blob> {
       /* older engines */
     }
     await waitForImages(sheet);
+    neutralizeArabicLetterSpacing(sheet);
 
     const canvas = await html2canvas(sheet, {
       scale,
@@ -120,7 +149,7 @@ export async function generateTemplatePdf(job: PdfJob): Promise<Blob> {
     });
     if (!canvas.width || !canvas.height) throw new Error("empty-canvas");
 
-    /* ---- slice the tall canvas into A4 pages ---- */
+    /* ---- slice geometry: A4 pages over the tall canvas ---- */
     const pxPerMm = canvas.width / A4_W_MM;
     const pageHpx = Math.max(1, Math.round(A4_H_MM * pxPerMm));
     let pageCount = Math.max(1, Math.ceil(canvas.height / pageHpx));
@@ -130,6 +159,27 @@ export async function generateTemplatePdf(job: PdfJob): Promise<Blob> {
       canvas.height - (pageCount - 1) * pageHpx < pageHpx * 0.02
     ) {
       pageCount--;
+    }
+
+    /* ---- clickable links: collect <a href> boxes before slicing ---- */
+    const sheetRect = sheet.getBoundingClientRect();
+    const cssScale = canvas.width / sheetRect.width; // canvas px per CSS px
+    const mmPerCss = A4_W_MM / sheetRect.width; // mm per CSS px
+    const cssPageH = pageHpx / cssScale; // page height in CSS px
+    type AnchorBox = { url: string; x: number; y: number; w: number; h: number };
+    const anchors: AnchorBox[] = [];
+    for (const a of Array.from(sheet.querySelectorAll("a[href]"))) {
+      const href = normalizeHref(a.getAttribute("href") || "");
+      if (!href || href.startsWith("#")) continue;
+      const r = a.getBoundingClientRect();
+      if (r.width <= 1 || r.height <= 1) continue;
+      anchors.push({
+        url: href,
+        x: r.left - sheetRect.left,
+        y: r.top - sheetRect.top,
+        w: r.width,
+        h: r.height,
+      });
     }
 
     const pdf = new jsPDF({
@@ -153,6 +203,22 @@ export async function generateTemplatePdf(job: PdfJob): Promise<Blob> {
       const img = page.toDataURL("image/jpeg", 0.92);
       if (i > 0) pdf.addPage();
       pdf.addImage(img, "JPEG", 0, 0, A4_W_MM, A4_H_MM, undefined, "FAST");
+
+      /* add clickable link annotations for anchors intersecting this page */
+      const bandTop = i * cssPageH;
+      const bandBottom = bandTop + cssPageH;
+      for (const a of anchors) {
+        const top = Math.max(a.y, bandTop);
+        const bottom = Math.min(a.y + a.h, bandBottom);
+        if (bottom - top <= 0.5) continue;
+        pdf.link(
+          a.x * mmPerCss,
+          (top - bandTop) * mmPerCss,
+          a.w * mmPerCss,
+          (bottom - top) * mmPerCss,
+          { url: a.url }
+        );
+      }
     }
     return pdf.output("blob");
   } finally {

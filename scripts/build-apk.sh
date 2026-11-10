@@ -37,7 +37,7 @@ echo "[3/9] aapt2 link"
   --java "$WORK/gen" \
   -A android-project/assets \
   --min-sdk-version 24 --target-sdk-version 34 \
-  --version-code 5 --version-name "1.2.1" \
+  --version-code 6 --version-name "1.2.2" \
   --auto-add-overlay
 
 echo "[4/9] javac"

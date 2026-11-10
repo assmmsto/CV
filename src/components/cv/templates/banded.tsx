@@ -1,4 +1,4 @@
-import { TemplateProps, pick, dateRange, Bullets, contactItems, CustomSections, FONT_STACKS, ProjectsList, CertsList, LanguageList, MiniIcon, hasSection } from "./shared";
+import { TemplateProps, pick, dateRange, Bullets, contactItems, CustomSections, FONT_STACKS, ProjectsList, CertsList, LanguageList, MiniIcon, hasSection, tracking } from "./shared";
 import { slabel, levelLabel } from "@/lib/cv/i18n";
 import { CSSProperties } from "react";
 
@@ -23,7 +23,7 @@ export function Corporate({ data, lang, accent, font, showPhoto }: TemplateProps
     <div dir={lang === "ar" ? "rtl" : "ltr"} style={{ fontFamily: sans, background: "#fff", color: "#222", textAlign: "start" }}>
       <header style={{ background: accent, color: "#fff", padding: "9mm 15mm", display: "flex", alignItems: "center", gap: 12 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <h1 style={{ fontSize: "23pt", fontWeight: 800, margin: 0, letterSpacing: "0.5px" }}>
+          <h1 style={{ fontSize: "23pt", fontWeight: 800, margin: 0, letterSpacing: tracking(lang, "0.5px") }}>
             {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
           </h1>
           {pick(p.jobTitle, lang) && <p style={{ fontSize: "13pt", margin: "3pt 0 7pt", opacity: 0.92 }}>{pick(p.jobTitle, lang)}</p>}
@@ -31,7 +31,13 @@ export function Corporate({ data, lang, accent, font, showPhoto }: TemplateProps
             {contactItems(data, lang).map((it, i) => (
               <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
                 <MiniIcon name={it.icon} size={11} style={{ color: "#fff" }} />
-                {it.value}
+                {it.href ? (
+                  <a href={it.href} style={{ color: "inherit", textDecoration: "underline" }}>
+                    {it.value}
+                  </a>
+                ) : (
+                  it.value
+                )}
               </span>
             ))}
           </div>
@@ -135,7 +141,7 @@ export function ElegantDark({ data, lang, accent, font }: TemplateProps) {
   const dark = "#101826";
   const gold = "#c9a227";
   const sec: CSSProperties = {
-    fontSize: "11.5pt", fontWeight: 700, color: gold, letterSpacing: "1px", textTransform: "uppercase",
+    fontSize: "11.5pt", fontWeight: 700, color: gold, letterSpacing: tracking(lang, "1px"), textTransform: "uppercase",
     margin: "0 0 7pt", display: "flex", alignItems: "center", gap: 10,
   };
   const entry: CSSProperties = { marginBottom: "10pt", breakInside: "avoid" };
@@ -156,17 +162,23 @@ export function ElegantDark({ data, lang, accent, font }: TemplateProps) {
             <img src={p.photo} alt="" style={{ width: 78, height: 78, borderRadius: "50%", objectFit: "cover", border: `2.5px solid ${gold}` }} />
           </div>
         )}
-        <h1 style={{ fontSize: "25pt", fontWeight: 700, margin: 0, letterSpacing: "2px", color: "#fff" }}>
+        <h1 style={{ fontSize: "25pt", fontWeight: 700, margin: 0, letterSpacing: tracking(lang, "2px"), color: "#fff" }}>
           {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
         </h1>
         {pick(p.jobTitle, lang) && (
-          <p style={{ fontSize: "12.5pt", margin: "6pt auto 9pt", color: gold, letterSpacing: "3px" }}>{pick(p.jobTitle, lang)}</p>
+          <p style={{ fontSize: "12.5pt", margin: "6pt auto 9pt", color: gold, letterSpacing: tracking(lang, "3px") }}>{pick(p.jobTitle, lang)}</p>
         )}
         <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "4px 16px", fontSize: "9.3pt", color: "#c8cfdb" }}>
           {contactItems(data, lang).map((it, i) => (
             <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
               <MiniIcon name={it.icon} size={11} style={{ color: gold }} />
-              {it.value}
+              {it.href ? (
+                  <a href={it.href} style={{ color: "inherit", textDecoration: "underline" }}>
+                    {it.value}
+                  </a>
+                ) : (
+                  it.value
+                )}
             </span>
           ))}
         </div>
@@ -262,7 +274,7 @@ export function ElegantDark({ data, lang, accent, font }: TemplateProps) {
 export function TimelinePro({ data, lang, accent, font, showPhoto }: TemplateProps) {
   const p = data.personal;
   const sans = font === "classic" ? FONT_STACKS.classic : FONT_STACKS.modern;
-  const sec: CSSProperties = { fontSize: "12pt", fontWeight: 700, color: accent, margin: "0 0 8pt", textTransform: "uppercase", letterSpacing: "1.5px" };
+  const sec: CSSProperties = { fontSize: "12pt", fontWeight: 700, color: accent, margin: "0 0 8pt", textTransform: "uppercase", letterSpacing: tracking(lang, "1.5px") };
   const heading = (t: string) => <h2 style={sec}>{t}</h2>;
 
   return (
@@ -278,7 +290,13 @@ export function TimelinePro({ data, lang, accent, font, showPhoto }: TemplatePro
           {contactItems(data, lang).map((it, i) => (
             <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 5, justifyContent: "flex-end" }}>
               <MiniIcon name={it.icon} size={11} style={{ color: accent }} />
-              {it.value}
+              {it.href ? (
+                  <a href={it.href} style={{ color: "inherit", textDecoration: "underline" }}>
+                    {it.value}
+                  </a>
+                ) : (
+                  it.value
+                )}
             </span>
           ))}
         </div>
@@ -414,7 +432,13 @@ export function Contemporary({ data, lang, accent, showPhoto, font }: TemplatePr
             {contactItems(data, lang).map((it, i) => (
               <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
                 <MiniIcon name={it.icon} size={10} style={{ color: "#fff" }} />
-                {it.value}
+                {it.href ? (
+                  <a href={it.href} style={{ color: "inherit", textDecoration: "underline" }}>
+                    {it.value}
+                  </a>
+                ) : (
+                  it.value
+                )}
               </span>
             ))}
           </div>

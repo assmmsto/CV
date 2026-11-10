@@ -111,13 +111,16 @@ function detectSection(line: string): string | null {
 }
 
 const RANGE_RE =
-  /((?:0?[1-9]|1[0-2])\/\d{4}|\d{4})\s*(?:[-–—]\s*((?:0?[1-9]|1[0-2])\/\d{4}|\d{4}|present|current|now|حتى\s*الآن|حتى|الآن))?\s*$/i;
+  /((?:0?[1-9]|1[0-2])\/\d{4}|\d{4}\/(?:0?[1-9]|1[0-2])|\d{4})\s*(?:[-–—]\s*|[\s]+(?:إلى|إلی|حتى|to|until|till|through)[\s]+)((?:0?[1-9]|1[0-2])\/\d{4}|\d{4}\/(?:0?[1-9]|1[0-2])|\d{4}|present|current|now|حتى\s*الآن|الآن|الان)?\s*$/i;
 
-/** A line that consists (almost) solely of a date range. */
+/** Remove a leading "من 2018…" / "from 2018…" prefix before range matching. */
+const stripRangePrefix = (l: string) => l.replace(/^من\s+(?=\d)/i, "").replace(/^from\s+(?=\d)/i, "");
+
+/** A line that consists (almost) solely of a date range (optionally prefixed by من/from). */
 const isDateLine = (l?: string): boolean => {
   if (!l) return false;
   if (detectSection(l)) return false;
-  const stripped = l.replace(RANGE_RE, "").trim();
+  const stripped = stripRangePrefix(l).replace(RANGE_RE, "").trim();
   return stripped.length === 0;
 };
 
@@ -129,8 +132,12 @@ const TITLE_HINT =
 
 const UNIV_HINT = /university|institute|college|school|academy|faculty|جامعة|معهد|كلية|مدرسة|أكاديمية|اكاديمية|كليه/i;
 
+/** Degree keywords — split "دبلوم محاسبة - المعهد التجاري" into degree + institution. */
+const DEGREE_HINT =
+  /bachelor|master|phd|doctorate|b\.?s\.?c|m\.?s\.?c|b\.?a\b|m\.?a\b|m\.?b\.?a|diploma|high\s*school|associate|بكالوريوس|بكلوريوس|ماجستير|دكتوراه|دبلوم|ثانوية|إجازة|اجازة/i;
+
 /** Lines that typically START with a description verb — never a header. */
-const DESC_HINT = /^(?:led|designed|developed|managed|created|improved|built|worked|handled|produced|coordinated|implemented|maintained|reduced|raised|assisted|supported|trained|wrote|prepared|organized|achieved|delivered|participated|contributed|established|increased|decreased|spearheaded|oversaw|supervised|guided|mentored|analyzed|tested|deployed|automated|migrated|optimized|resolved|documented|researched|presented|negotiated|collaborated|streamlined|enhanced|expanded|launched|started|grew|cut|saved|نشر|قيادة|تصميم|رفع|تحسين|إدارة|ادارة|تطوير|أداء|إنشاء|انشاء|متابعة|تنفيذ|هندسة|كتابة|ترجمة|عمل|إعداد|اعداد|تنسيق|تقديم|مشاركة|المساهمة|إنجاز|تحقيق|صيانة|تركيب|دعم|تدريب|شرح|مراجعة|تنظيم|استخدام|اعتماد|إبراز|تمييز|تشغيل|فحص|معالجة|حل|بناء|برمجة|تسليم)/i;
+const DESC_HINT = /^(?:led|designed|developed|managed|created|improved|built|worked|handled|produced|coordinated|implemented|maintained|reduced|raised|assisted|supported|trained|wrote|prepared|organized|achieved|delivered|participated|contributed|established|increased|decreased|spearheaded|oversaw|supervised|guided|mentored|analyzed|tested|deployed|automated|migrated|optimized|resolved|documented|researched|presented|negotiated|collaborated|streamlined|enhanced|expanded|launched|started|grew|cut|saved|نشر|قيادة|القيادة|تصميم|رفع|تحسين|إدارة|ادارة|تطوير|أداء|إنشاء|انشاء|متابعة|المتابعة|تنفيذ|هندسة|كتابة|ترجمة|عمل|العمل|إعداد|اعداد|تنسيق|تقديم|مشاركة|المشاركة|المساهمة|إنجاز|تحقيق|صيانة|تركيب|دعم|تدريب|شرح|مراجعة|المراجعة|تنظيم|استخدام|اعتماد|إبراز|تمييز|تشغيل|فحص|معالجة|حل|بناء|برمجة|تسليم|تسجيل|تحليل|إشراف|الإشراف|مسؤول|المسؤول|تسوية|ترحيل|أرشفة|تدقيق|حصر|زيارة|تحصيل|صرف|دفع|تفاوض|استقبال|تنظيم\s|إدارة\s)/i;
 
 const COUNTRY_HINT = /syria|lebanon|jordan|saudi|egypt|u\.?a\.?e|emirates|iraq|yemen|qatar|kuwait|oman|bahrain|palestine|morocco|algeria|tunisia|libya|sudan|turkey|germany|france|spain|italy|canada|america|united\s*states|united\s*kingdom|سوريا|سورية|لبنان|الأردن|الاردن|السعودية|مصر|الإمارات|الامارات|العراق|اليمن|قطر|الكويت|عمان|البحرين|فلسطين|المغرب|الجزائر|تونس|ليبيا|السودان|تركيا|ألمانيا|المانيا|فرنسا|إسبانيا|امريكا|أمريكا|بريطانيا|إنجلترا|هولندا|السويد|الدنمارك/i;
 
@@ -236,51 +243,95 @@ export function parseCVText(raw: string): ParseResult {
   let expBuffer: string[] = [];
   let eduBuffer: string[] = [];
 
-  const flushExpBufferAsEntry = (range: RegExpMatchArray) => {
-    const head = expBuffer.join(" — ");
+  const flushExpBufferAsEntry = (range: RegExpMatchArray | null) => {
+    const buf = expBuffer;
     expBuffer = [];
+    if (!buf.length) return;
+    let headLines = buf;
+    if (!range) {
+      // maybe a pure date line ended up inside the buffer
+      for (let i = buf.length - 1; i >= 0; i--) {
+        const r = stripRangePrefix(buf[i]).match(RANGE_RE);
+        if (r && isDateLine(buf[i])) {
+          range = r;
+          headLines = buf.slice(0, i).concat(buf.slice(i + 1));
+          break;
+        }
+      }
+    }
+    const head = headLines.join(" — ");
     const { position, company, city: c } = splitExpHead(head);
-    const current = /present|current|now|حتى\s*الآن|حتى|الآن/i.test(range[2] ?? "");
+    const current = range
+      ? /present|current|now|حتى\s*الآن|حتى|الآن|الان/i.test(range[2] ?? "")
+      : false;
     experience.push({
       position,
       company,
       city: c,
-      startDate: normDate(range[1]),
-      endDate: current ? "" : normDate(range[2] ?? ""),
+      startDate: range ? normDate(range[1]) : "",
+      endDate: range && !current ? normDate(range[2] ?? "") : "",
       current,
       description: { ar: "", en: "" },
     });
   };
 
-  const flushEduBufferAsEntry = (range: RegExpMatchArray) => {
-    const head = eduBuffer.join(" | ");
+  const flushEduBufferAsEntry = (range: RegExpMatchArray | null) => {
+    const buf = eduBuffer;
     eduBuffer = [];
+    if (!buf.length) return;
+    let headLines = buf;
+    if (!range) {
+      for (let i = buf.length - 1; i >= 0; i--) {
+        const r = stripRangePrefix(buf[i]).match(RANGE_RE);
+        if (r && isDateLine(buf[i])) {
+          range = r;
+          headLines = buf.slice(0, i).concat(buf.slice(i + 1));
+          break;
+        }
+      }
+    }
+    const head = headLines.join(" | ");
     const norm = head.replace(/\s+at\s+/gi, " | ");
     const parts = norm.split(/\s*\|\s*|[,،]/).map((p) => p.trim()).filter(Boolean);
     let inst = parts[0] ?? "";
     let degree = parts[1] ?? "";
     if (!UNIV_HINT.test(inst) && UNIV_HINT.test(degree)) [inst, degree] = [degree, inst];
-    // "بكالوريوس X - التصميم" → degree + field
+    // "دبلوم محاسبة - المعهد التجاري" on ONE line → degree + institution
+    if (
+      (!degree || !DEGREE_HINT.test(degree)) &&
+      inst && DEGREE_HINT.test(inst) && /\s[-–—]\s/.test(inst)
+    ) {
+      const segs = inst.split(/\s+[-–—]\s+/);
+      const d0 = segs[0];
+      const rest = segs.slice(1).join(" ");
+      if (DEGREE_HINT.test(d0) && !UNIV_HINT.test(d0) && rest) {
+        degree = d0;
+        inst = rest;
+      }
+    }
+    // "بكالوريوس X - التخصص" → degree + field
     let field = "";
     const dashSplit = degree.split(/\s+[-–—]\s+/);
     if (dashSplit.length >= 2) {
       degree = dashSplit[0];
       field = dashSplit.slice(1).join(" ");
     }
-    const current = /present|current|now|حتى\s*الآن|حتى|الآن/i.test(range[2] ?? "");
+    const current = range
+      ? /present|current|now|حتى\s*الآن|حتى|الآن|الان/i.test(range[2] ?? "")
+      : false;
     education.push({
       degree: splitBi(degree),
       field: splitBi(field),
       institution: splitBi(inst),
-      startDate: normDate(range[1]),
-      endDate: current ? "" : normDate(range[2] ?? ""),
+      startDate: range ? normDate(range[1]) : "",
+      endDate: range && !current ? normDate(range[2] ?? "") : "",
       current,
       grade: { ar: "", en: "" },
     });
   };
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
+    const line = stripRangePrefix(lines[i]);
 
     // header region: name / title / city line
     if (i < headerCount && !emailIn(line) && !phoneIn(line) && !URL_RE.test(line) && !detectSection(line)) {
@@ -310,6 +361,11 @@ export function parseCVText(raw: string): ParseResult {
 
     const sec = detectSection(line);
     if (sec) {
+      // switching away: don't lose whatever was buffered for the old section
+      if (sec !== section) {
+        if (section === "experience" && expBuffer.length) flushExpBufferAsEntry(null);
+        if (section === "education" && eduBuffer.length) flushEduBufferAsEntry(null);
+      }
       section = sec;
       continue;
     }
@@ -373,21 +429,38 @@ export function parseCVText(raw: string): ParseResult {
         else if (!last.field[key]) last.field[key] = line;
       }
     } else if (section === "projects") {
+      // a URL on the name line is extracted into the project's url field
+      const raw = stripBullet(line);
+      const urlMatch = raw.match(URL_RE);
+      const url = urlMatch ? urlMatch[0].replace(/[.,;:،)\]]+$/, "") : "";
+      let namePart = urlMatch && urlMatch.index !== undefined ? raw.slice(0, urlMatch.index).trim() : raw;
+      namePart = namePart
+        .replace(/\s+(?:على|on|at|الموقع|الرابط)\s*$/i, "")
+        .replace(/[-–—|]\s*$/, "")
+        .trim();
+      if (url) {
+        const dashIdx = namePart.search(/\s[-–—]\s/);
+        if (dashIdx > 0) namePart = namePart.slice(0, dashIdx).trim();
+      }
       if (isBullet(line) || projects.length === 0) {
         projects.push({
-          name: splitBi(stripBullet(line)),
+          name: splitBi(namePart),
           description: { ar: "", en: "" },
-          url: "",
+          url,
           technologies: { ar: "", en: "" },
         });
       } else if (projects.length > 0) {
         const last = projects[projects.length - 1];
+        if (url && !last.url) last.url = url;
         const key = hasArabic(line) ? "ar" : "en";
         last.description[key] = (last.description[key] ? last.description[key] + " " : "") + line;
       }
     } else if (section === "certifications") {
       const yearMatch = line.match(/\b(19|20)\d{2}\b|\d{2}\/\d{4}/);
-      const clean = line.replace(/\b(19|20)\d{2}\b|\d{2}\/\d{4}/, "").replace(/[,\u2013-]+$/, "").trim();
+      const clean = stripBullet(line)
+        .replace(/\b(19|20)\d{2}\b|\d{2}\/\d{4}/, "")
+        .replace(/[،,\u2013\u2014\-|:\s]+$/, "")
+        .trim();
       certifications.push({
         name: splitBi(clean),
         issuer: { ar: "", en: "" },
@@ -429,6 +502,10 @@ export function parseCVText(raw: string): ParseResult {
       }
     }
   }
+
+  // anything still buffered when the text ends must not be dropped
+  if (expBuffer.length) flushExpBufferAsEntry(null);
+  if (eduBuffer.length) flushEduBufferAsEntry(null);
 
   // fill missing job title from first experience position
   if (!jobTitle.ar && !jobTitle.en && experience.length > 0) jobTitle = experience[0].position;
@@ -474,8 +551,10 @@ export function parseCVText(raw: string): ParseResult {
 function normDate(s: string): string {
   if (!s) return "";
   const low = s.toLowerCase().trim();
-  if (/present|current|now|حتى/.test(low)) return "";
+  if (/present|current|now|حتى|الآن|الان/.test(low)) return "";
   if (/^\d{4}$/.test(low)) return low;
+  const ym = low.match(/^(\d{4})\/(\d{1,2})$/); // 2018/03 (year first) → 03/2018
+  if (ym) return `${ym[2].padStart(2, "0")}/${ym[1]}`;
   const m = low.match(/^(\d{1,2})\/(\d{4})$/);
   if (m) return `${m[1].padStart(2, "0")}/${m[2]}`;
   return low;

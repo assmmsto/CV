@@ -28,6 +28,57 @@ export function pick(b: BiText | undefined, lang: Lang): string {
   return (b[lang] || b.ar || b.en || "").trim();
 }
 
+/**
+ * Letter-tracking is a Latin-typography device. For Arabic it DESTROYS canvas
+ * text shaping: html2canvas-pro draws glyph-by-glyph when letter-spacing ≠ 0,
+ * which renders disconnected (isolated-form) Arabic letters in the PDF.
+ * Track only when the sheet is rendered in English.
+ */
+export const tracking = (lang: Lang, px: string): string | undefined =>
+  lang === "en" ? px : undefined;
+
+/**
+ * Normalize a user-typed link into an absolute href:
+ *  "www.x.dev" → "https://www.x.dev", "x.dev/jobs" → "https://x.dev/jobs",
+ *  "a@b.com" → "mailto:a@b.com". Already-schemed URLs pass through.
+ */
+export function normalizeHref(url: string): string {
+  const u = (url || "").trim();
+  if (!u) return "";
+  if (/^(https?:|mailto:|tel:)/i.test(u)) return u;
+  if (/^www\./i.test(u)) return "https://" + u;
+  if (u.includes("@") && !u.includes("/")) return "mailto:" + u;
+  if (/^[a-z0-9][\w.-]*\.[a-z]{2,}(\/|$)/i.test(u)) return "https://" + u;
+  return u;
+}
+
+/** bare URL (with a path) inside free text — plain domains without a path stay plain */
+const URL_IN_TEXT = /(https?:\/\/[^\s]+|www\.[^\s]+|[a-z0-9][\w.-]*\.[a-z]{2,}\/[^\s]+)/gi;
+
+/** Render free text with bare URLs turned into real clickable <a> elements. */
+export function Linkify({ text, style }: { text: string; style?: CSSProperties }) {
+  if (!text) return null;
+  const parts: ReactNode[] = [];
+  let last = 0;
+  let m: RegExpExecArray | null;
+  URL_IN_TEXT.lastIndex = 0;
+  while ((m = URL_IN_TEXT.exec(text))) {
+    let url = m[0].replace(/[.,;:،،)\]]+$/, "");
+    const start = m.index;
+    const end = start + url.length;
+    URL_IN_TEXT.lastIndex = end;
+    if (start > last) parts.push(text.slice(last, start));
+    parts.push(
+      <a key={start} href={normalizeHref(url)} style={{ color: "inherit", textDecoration: "underline" }}>
+        {url}
+      </a>
+    );
+    last = end;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return <span style={style}>{parts}</span>;
+}
+
 export function splitLines(s: string): string[] {
   return (s ?? "")
     .split("\n")
@@ -54,18 +105,20 @@ export function dateRange(
 export interface ContactItem {
   icon: string;
   value: string;
+  /** clickable href (mailto:/tel:/https:) — rendered as a real <a> so PDFs get link annotations */
+  href?: string;
 }
 
 export function contactItems(data: CVData, lang: Lang): ContactItem[] {
   const p = data.personal;
   const items: ContactItem[] = [];
-  if (p.email) items.push({ icon: "email", value: p.email });
-  if (p.phone) items.push({ icon: "phone", value: p.phone });
+  if (p.email) items.push({ icon: "email", value: p.email, href: `mailto:${p.email}` });
+  if (p.phone) items.push({ icon: "phone", value: p.phone, href: `tel:${p.phone.replace(/[\s()\-]/g, "")}` });
   const loc = [pick(p.city, lang), pick(p.country, lang)].filter(Boolean).join(lang === "ar" ? "، " : ", ");
   if (loc) items.push({ icon: "location", value: loc });
-  if (p.linkedin) items.push({ icon: "linkedin", value: p.linkedin });
-  if (p.github) items.push({ icon: "github", value: p.github });
-  if (p.website) items.push({ icon: "web", value: p.website });
+  if (p.linkedin) items.push({ icon: "linkedin", value: p.linkedin, href: normalizeHref(p.linkedin) });
+  if (p.github) items.push({ icon: "github", value: p.github, href: normalizeHref(p.github) });
+  if (p.website) items.push({ icon: "web", value: p.website, href: normalizeHref(p.website) });
   return items;
 }
 
@@ -99,14 +152,14 @@ export function Bullets({ text, style, bulletStyle }: {
   const lines = splitLines(text);
   if (lines.length === 0) return null;
   if (lines.length === 1 && lines[0].length > 0 && !text.includes("\n")) {
-    return <p style={{ margin: 0, ...style }}>{lines[0]}</p>;
+    return <p style={{ margin: 0, ...style }}><Linkify text={lines[0]} /></p>;
   }
   return (
     <ul style={{ margin: 0, padding: 0, listStyle: "none", ...style }}>
       {lines.map((l, i) => (
         <li key={i} style={{ display: "flex", gap: "6px", marginBottom: "2px" }}>
           <span aria-hidden style={{ flexShrink: 0, ...bulletStyle }}>•</span>
-          <span>{l}</span>
+          <span><Linkify text={l} /></span>
         </li>
       ))}
     </ul>
@@ -151,7 +204,13 @@ export function ContactLine({ data, lang, style, itemStyle, iconColor }: {
       {items.map((it, i) => (
         <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: "4px", ...itemStyle }}>
           <MiniIcon name={it.icon} style={{ color: iconColor ?? "currentColor", opacity: 0.85 }} />
-          <span style={{ unicodeBidi: "plaintext" }}>{it.value}</span>
+          {it.href ? (
+            <a href={it.href} style={{ color: "inherit", textDecoration: "underline" }}>
+              <span style={{ unicodeBidi: "plaintext" }}>{it.value}</span>
+            </a>
+          ) : (
+            <span style={{ unicodeBidi: "plaintext" }}>{it.value}</span>
+          )}
         </span>
       ))}
     </div>
@@ -196,7 +255,12 @@ export function ProjectsList({ data, lang, nameStyle }: { data: CVData; lang: La
         <div key={p.id} style={{ marginBottom: "8px" }}>
           <div style={{ fontWeight: 700, ...nameStyle }}>
             {pick(p.name, lang)}
-            {p.url ? <span style={{ fontWeight: 400, opacity: 0.8 }}> — {p.url}</span> : null}
+            {p.url ? (
+              <a href={normalizeHref(p.url)} style={{ fontWeight: 400, opacity: 0.85, color: "inherit", textDecoration: "underline" }}>
+                {" — "}
+                {p.url}
+              </a>
+            ) : null}
           </div>
           {pick(p.description, lang) && (
             <p style={{ margin: "1px 0 0" }}>{pick(p.description, lang)}</p>
@@ -222,7 +286,12 @@ export function CertsList({ data, lang }: { data: CVData; lang: Lang }) {
           <span>
             <b>{pick(c.name, lang)}</b>
             {pick(c.issuer, lang) ? <span style={{ opacity: 0.8 }}> — {pick(c.issuer, lang)}</span> : null}
-            {c.url ? <span style={{ opacity: 0.8 }}> — {c.url}</span> : null}
+            {c.url ? (
+              <a href={normalizeHref(c.url)} style={{ opacity: 0.85, color: "inherit", textDecoration: "underline" }}>
+                {" — "}
+                {c.url}
+              </a>
+            ) : null}
           </span>
           <span style={{ opacity: 0.75, flexShrink: 0 }}>{c.date}</span>
         </div>

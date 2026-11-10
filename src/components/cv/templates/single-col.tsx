@@ -1,4 +1,4 @@
-import { TemplateProps, pick, dateRange, Bullets, ContactLine, CustomSections, FONT_STACKS, hasSection, ProjectsList, CertsList } from "./shared";
+import { TemplateProps, pick, dateRange, Bullets, ContactLine, CustomSections, FONT_STACKS, hasSection, ProjectsList, CertsList, tracking } from "./shared";
 import { slabel } from "@/lib/cv/i18n";
 import { CSSProperties } from "react";
 
@@ -19,7 +19,7 @@ export function AtsClassic({ data, lang, font, showPhoto }: TemplateProps) {
           /* eslint-disable-next-line @next/next/no-img-element */
           <img src={p.photo} alt="" style={{ width: 68, height: 68, borderRadius: "50%", objectFit: "cover", border: "2px solid #444", display: "block", margin: "0 auto 6pt" }} />
         )}
-        <h1 style={{ fontSize: "20pt", fontWeight: 700, margin: 0, textTransform: "uppercase", letterSpacing: "1px" }}>
+        <h1 style={{ fontSize: "20pt", fontWeight: 700, margin: 0, textTransform: "uppercase", letterSpacing: tracking(lang, "1px") }}>
           {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
         </h1>
         {pick(p.jobTitle, lang) && <p style={{ fontSize: "11.5pt", margin: "3pt 0 5pt" }}>{pick(p.jobTitle, lang)}</p>}
@@ -118,7 +118,7 @@ export function AtsClassic({ data, lang, font, showPhoto }: TemplateProps) {
 export function AtsModern({ data, lang, font, showPhoto }: TemplateProps) {
   const p = data.personal;
   const sans = font === "classic" ? FONT_STACKS.classic : FONT_STACKS.modern;
-  const sec: CSSProperties = { fontSize: "11.5pt", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", margin: "13pt 0 5pt", paddingBottom: 3, borderBottom: "2px solid #111" };
+  const sec: CSSProperties = { fontSize: "11.5pt", fontWeight: 700, textTransform: "uppercase", letterSpacing: tracking(lang, "1.5px"), margin: "13pt 0 5pt", paddingBottom: 3, borderBottom: "2px solid #111" };
   const entry: CSSProperties = { marginBottom: "8pt", breakInside: "avoid" };
 
   const heading = (t: string) => <h2 style={sec}>{t}</h2>;
@@ -130,7 +130,7 @@ export function AtsModern({ data, lang, font, showPhoto }: TemplateProps) {
           /* eslint-disable-next-line @next/next/no-img-element */
           <img src={p.photo} alt="" style={{ width: 74, height: 74, borderRadius: "50%", objectFit: "cover", border: "2.5px solid #111", display: "block", margin: "0 0 8pt", marginInlineEnd: "auto" }} />
         )}
-        <h1 style={{ fontSize: "22pt", fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}>
+        <h1 style={{ fontSize: "22pt", fontWeight: 800, margin: 0, letterSpacing: tracking(lang, "-0.5px") }}>
           {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
         </h1>
         {pick(p.jobTitle, lang) && <p style={{ fontSize: "12pt", margin: "2pt 0 6pt", color: "#333" }}>{pick(p.jobTitle, lang)}</p>}
@@ -230,7 +230,7 @@ export function Executive({ data, lang, font, showPhoto }: TemplateProps) {
   const p = data.personal;
   const serif = FONT_STACKS.mixed;
   const sec: CSSProperties = {
-    fontSize: "11pt", fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase",
+    fontSize: "11pt", fontWeight: 700, letterSpacing: tracking(lang, "2.5px"), textTransform: "uppercase",
     textAlign: "center", margin: "12pt 0 7pt",
   };
   const entry: CSSProperties = { marginBottom: "9pt", breakInside: "avoid" };
@@ -250,7 +250,7 @@ export function Executive({ data, lang, font, showPhoto }: TemplateProps) {
             <img src={p.photo} alt="" style={{ width: 76, height: 76, borderRadius: "50%", objectFit: "cover", border: "2px solid #1a1a1a", margin: "0 auto" }} />
           </div>
         )}
-        <h1 style={{ fontSize: "23pt", fontWeight: 400, margin: 0, letterSpacing: "3px", textTransform: "uppercase", fontVariant: lang === "en" ? "small-caps" : "normal" }}>
+        <h1 style={{ fontSize: "23pt", fontWeight: 400, margin: 0, letterSpacing: tracking(lang, "3px"), textTransform: "uppercase", fontVariant: lang === "en" ? "small-caps" : "normal" }}>
           {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
         </h1>
         {pick(p.jobTitle, lang) && <p style={{ fontSize: "12pt", margin: "4pt 0", color: "#444", fontStyle: "italic" }}>{pick(p.jobTitle, lang)}</p>}
@@ -341,7 +341,7 @@ export function MinimalPro({ data, lang, accent, font }: TemplateProps) {
   const p = data.personal;
   const sans = font === "classic" ? FONT_STACKS.classic : FONT_STACKS.modern;
   const sec: CSSProperties = {
-    fontSize: "11pt", fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase",
+    fontSize: "11pt", fontWeight: 600, letterSpacing: tracking(lang, "1px"), textTransform: "uppercase",
     color: "#9a9a9a", margin: "16pt 0 7pt",
   };
   const entry: CSSProperties = { marginBottom: "10pt", breakInside: "avoid" };
@@ -352,7 +352,7 @@ export function MinimalPro({ data, lang, accent, font }: TemplateProps) {
     <div dir={lang === "ar" ? "rtl" : "ltr"} style={{ padding: "17mm 17mm", fontFamily: sans, color: "#212121", textAlign: "start" }}>
       <div style={{ borderTop: `3px solid ${accent}`, margin: "-17mm -17mm 12mm" }} />
       <header style={{ marginBottom: 6 }}>
-        <h1 style={{ fontSize: "24pt", fontWeight: 300, margin: 0, letterSpacing: "-0.5px" }}>
+        <h1 style={{ fontSize: "24pt", fontWeight: 300, margin: 0, letterSpacing: tracking(lang, "-0.5px") }}>
           {pick(p.fullName, lang) || (lang === "ar" ? "الاسم الكامل" : "Your Name")}
         </h1>
         {pick(p.jobTitle, lang) && <p style={{ fontSize: "12pt", margin: "3pt 0 8pt", color: "#666", fontWeight: 300 }}>{pick(p.jobTitle, lang)}</p>}

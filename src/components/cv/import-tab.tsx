@@ -28,6 +28,17 @@ export function ImportTab({ lang }: { lang: Lang }) {
     setResult(null);
     try {
       const text = await extractAnyText(f);
+      // scanned/image-only files yield (almost) no text — fail loudly, not silently
+      if (text.replace(/\s/g, "").length < 20) {
+        toast({
+          title:
+            lang === "ar"
+              ? "الملف لا يحتوي نصاً قابلاً للاستخراج — غالباً صورة ممسوحة ضوئياً. أدخل بياناتك يدوياً أو احفظ سيرتك كـ PDF نصي أو DOCX."
+              : "No selectable text found — the file is probably a scanned image. Enter your data manually or save your CV as text-based PDF/DOCX.",
+          variant: "destructive",
+        });
+        return;
+      }
       setRawText(text.slice(0, 20000));
       const parsed = parseCVText(text);
       setResult(parsed);

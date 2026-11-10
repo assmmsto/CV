@@ -1,0 +1,149 @@
+{
+  "tag": "before",
+  "base": "https://assmmsto.github.io/CV/app",
+  "report": [
+    {
+      "tid": "ats-classic",
+      "lang": "ar",
+      "kb": "212",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "ats-modern",
+      "lang": "ar",
+      "kb": "223",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "executive",
+      "lang": "ar",
+      "kb": "184",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "minimal-pro",
+      "lang": "ar",
+      "kb": "165",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "modern-sidebar",
+      "lang": "ar",
+      "kb": "221",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "corporate",
+      "lang": "ar",
+      "kb": "212",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "timeline",
+      "lang": "ar",
+      "kb": "200",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "elegant-dark",
+      "lang": "ar",
+      "kb": "217",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "compact-pro",
+      "lang": "ar",
+      "kb": "181",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "contemporary",
+      "lang": "ar",
+      "kb": "213",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "ats-classic",
+      "lang": "en",
+      "kb": "262",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "ats-modern",
+      "lang": "en",
+      "kb": "272",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "executive",
+      "lang": "en",
+      "kb": "225",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "minimal-pro",
+      "lang": "en",
+      "kb": "202",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "modern-sidebar",
+      "lang": "en",
+      "kb": "259",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "corporate",
+      "lang": "en",
+      "kb": "247",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "timeline",
+      "lang": "en",
+      "kb": "248",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "elegant-dark",
+      "lang": "en",
+      "kb": "265",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "compact-pro",
+      "lang": "en",
+      "kb": "222",
+      "links": 0,
+      "uris": []
+    },
+    {
+      "tid": "contemporary",
+      "lang": "en",
+      "kb": "254",
+      "links": 0,
+      "uris": []
+    }
+  ],
+  "arLinks": 0,
+  "enLinks": 0,
+  "errors": []
+}

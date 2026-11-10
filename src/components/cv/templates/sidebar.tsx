@@ -1,4 +1,4 @@
-import { TemplateProps, pick, dateRange, Bullets, ContactItem, contactItems, CustomSections, FONT_STACKS, SkillBars, LanguageList, ProjectsList, CertsList, MiniIcon, hasSection } from "./shared";
+import { TemplateProps, pick, dateRange, Bullets, ContactItem, contactItems, CustomSections, FONT_STACKS, SkillBars, LanguageList, ProjectsList, CertsList, MiniIcon, hasSection, tracking } from "./shared";
 import { slabel, levelLabel } from "@/lib/cv/i18n";
 import { CSSProperties } from "react";
 
@@ -9,7 +9,7 @@ export function ModernSidebar({ data, lang, accent, showPhoto, font }: TemplateP
   const sidebarBg = "#1e293b";
   const sec: CSSProperties = { fontSize: "12.5pt", fontWeight: 700, color: accent, margin: "0 0 7pt", paddingBottom: 3, borderBottom: `2px solid ${accent}` };
   const entry: CSSProperties = { marginBottom: "10pt", breakInside: "avoid" };
-  const sideHead: CSSProperties = { fontSize: "11pt", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: "#fff", margin: "0 0 7pt", paddingBottom: 4, borderBottom: "1px solid rgba(255,255,255,0.25)" };
+  const sideHead: CSSProperties = { fontSize: "11pt", fontWeight: 700, letterSpacing: tracking(lang, "1.5px"), textTransform: "uppercase", color: "#fff", margin: "0 0 7pt", paddingBottom: 4, borderBottom: "1px solid rgba(255,255,255,0.25)" };
   const items = contactItems(data, lang);
 
   const heading = (t: string) => <h2 style={sec}>{t}</h2>;
@@ -30,7 +30,13 @@ export function ModernSidebar({ data, lang, accent, showPhoto, font }: TemplateP
             {items.map((it: ContactItem, i: number) => (
               <div key={i} style={{ display: "flex", gap: 6, alignItems: "flex-start" }}>
                 <MiniIcon name={it.icon} size={11} style={{ color: accent, marginTop: 2 }} />
-                <span style={{ unicodeBidi: "plaintext" }}>{it.value}</span>
+                <span style={{ unicodeBidi: "plaintext" }}>{it.href ? (
+                  <a href={it.href} style={{ color: "inherit", textDecoration: "underline" }}>
+                    {it.value}
+                  </a>
+                ) : (
+                  it.value
+                )}</span>
               </div>
             ))}
           </div>
@@ -141,9 +147,9 @@ export function ModernSidebar({ data, lang, accent, showPhoto, font }: TemplateP
 export function CompactPro({ data, lang, accent, font, showPhoto }: TemplateProps) {
   const p = data.personal;
   const sans = font === "classic" ? FONT_STACKS.classic : FONT_STACKS.modern;
-  const sec: CSSProperties = { fontSize: "10.5pt", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.2px", color: "#111", margin: "0 0 6pt" };
+  const sec: CSSProperties = { fontSize: "10.5pt", fontWeight: 700, textTransform: "uppercase", letterSpacing: tracking(lang, "1.2px"), color: "#111", margin: "0 0 6pt" };
   const entry: CSSProperties = { marginBottom: "7pt", breakInside: "avoid" };
-  const railHead: CSSProperties = { fontSize: "9.5pt", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", color: accent, margin: "0 0 5pt", paddingBottom: 2, borderBottom: `1.5px solid ${accent}` };
+  const railHead: CSSProperties = { fontSize: "9.5pt", fontWeight: 700, textTransform: "uppercase", letterSpacing: tracking(lang, "1px"), color: accent, margin: "0 0 5pt", paddingBottom: 2, borderBottom: `1.5px solid ${accent}` };
 
   const heading = (t: string) => <h2 style={{ ...sec, display: "flex", alignItems: "center", gap: 6 }}><span style={{ width: 18, height: 2.5, background: accent, display: "inline-block", flexShrink: 0 }} />{t}</h2>;
 
@@ -158,7 +164,13 @@ export function CompactPro({ data, lang, accent, font, showPhoto }: TemplateProp
         </div>
         <div style={{ fontSize: "8.8pt", textAlign: "end", lineHeight: 1.5, color: "#444", display: "grid", gap: 1 }}>
           {contactItems(data, lang).map((it, i) => (
-            <span key={i} style={{ unicodeBidi: "plaintext" }}>{it.value}</span>
+            <span key={i} style={{ unicodeBidi: "plaintext" }}>{it.href ? (
+                  <a href={it.href} style={{ color: "inherit", textDecoration: "underline" }}>
+                    {it.value}
+                  </a>
+                ) : (
+                  it.value
+                )}</span>
           ))}
         </div>
         {showPhoto && p.photo && (
