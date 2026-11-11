@@ -79,6 +79,9 @@
   .lede{color:var(--muted);font-size:clamp(1rem,1.5vw,1.12rem);margin-top:18px;max-width:530px}
   .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
   .cta-note{display:flex;align-items:center;gap:7px;font-size:.82rem;color:var(--dim);margin-top:12px}
+  .dl-pill{display:inline-flex;align-items:center;gap:7px;margin-top:14px;padding:7px 14px;border-radius:999px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.24);color:#7ee0b6;font-size:.82rem;font-weight:600;transition:.18s}
+  .dl-pill b{color:#34d399;font-weight:800;font-size:.95rem;font-variant-numeric:tabular-nums}
+  .dl-pill:hover{border-color:rgba(16,185,129,.5);background:rgba(16,185,129,.13)}
   .trust{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:26px;padding-top:22px;border-top:1px solid var(--line-soft)}
   .trust span{display:inline-flex;align-items:center;gap:7px;font-size:.86rem;color:var(--muted)}
   .trust .icon{width:16px;height:16px;color:var(--green);stroke-width:2.4}
@@ -274,8 +277,8 @@
   "applicationCategory":"BusinessApplication",
   "applicationSubCategory":"Resume Builder",
   "url":"https://assmmsto.github.io/CV/",
-  "downloadUrl":"https://assmmsto.github.io/CV/cv-studio.apk",
-  "softwareVersion":"1.2.2",
+  "downloadUrl":"https://github.com/assmmsto/CV/releases/download/v1.3.0/cv-studio.apk",
+  "softwareVersion":"1.3.0",
   "fileSize":"1.6MB",
   "inLanguage":["ar","en"],
   "description":"منشئ سيرة ذاتية ثنائي اللغة (عربي/إنجليزي) يولّد 10 قوالب PDF متوافقة مع أنظمة الفرز الآلي ATS، ويعمل بدون إنترنت.",
@@ -343,7 +346,7 @@
 <section class="hero">
   <div class="container hero-grid">
     <div class="hero-copy">
-      <span class="eyebrow"><span class="dot"></span> الإصدار 1.2.2 — موقّع رقمياً</span>
+      <span class="eyebrow"><span class="dot"></span> الإصدار 1.3.0 — موقّع رقمياً</span>
       <h1>سيرة واحدة…<br><em>عشرة قوالب</em> تقبلها أنظمة التوظيف</h1>
       <p class="lede">أدخل بياناتك مرة واحدة بالعربي والإنجليزي، واحصل على عشرة ملفات PDF بتصاميم مختلفة — كل قالب بنسبة توافق ATS واضحة. يعمل بدون إنترنت، وبياناتك لا تغادر جهازك.</p>
 
@@ -359,8 +362,13 @@
       </div>
       <div class="cta-note">
         <svg class="icon" width="14" height="14" style="color:#78716c"><use href="#i-bolt"/></svg>
-        الإصدار 1.2.2 • <span id="size-hero">1.5 ميجا</span> • أندرويد 7.0 فما فوق
+        الإصدار 1.3.0 • <span id="size-hero">1.5 ميجا</span> • أندرويد 7.0 فما فوق
       </div>
+
+      <a class="dl-pill" href="download/" aria-label="عدد التحميلات">
+        <svg class="icon" width="14" height="14"><use href="#i-download"/></svg>
+        <b id="dl-num">1,370</b> تحميلًا حتى الآن
+      </a>
 
       <div class="trust">
         <span><svg class="icon"><use href="#i-check"/></svg> بدون حساب</span>
@@ -784,7 +792,7 @@
         <a href="https://github.com/assmmsto/CV" rel="noopener">المستودع على GitHub</a>
       </div>
     </div>
-    <small>CV Studio • الإصدار 1.2.2 • تطبيق أندرويد + نسخة ويب (PWA) — لا يجمع أي بيانات.</small>
+    <small>CV Studio • الإصدار 1.3.0 • تطبيق أندرويد + نسخة ويب (PWA) — لا يجمع أي بيانات.</small>
   </div>
 </footer>
 
@@ -845,6 +853,44 @@
   document.getElementById('lb-close').addEventListener('click',close);
   lb.addEventListener('click',function(e){if(e.target===lb)close();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+})();
+</script>
+
+<script>
+/* عدّاد التحميلات — 1,370 تحميلًا سابقًا + عدد تنزيلات ملف الإصدار على GitHub */
+(function(){
+  var BASE = 1370, KEY = 'cv-dl-count-v1', TTL = 30 * 60 * 1000;
+  var el = document.getElementById('dl-num');
+  if (!el) return;
+  function fmt(n){ return n.toLocaleString('en-US'); }
+  function paint(n){ el.textContent = fmt(BASE + n); }
+  paint(0);
+  var cached = null;
+  try { cached = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){}
+  if (cached && typeof cached.n === 'number' && (Date.now() - cached.t) < TTL) {
+    paint(cached.n);
+  } else {
+    fetch('https://api.github.com/repos/assmmsto/CV/releases/tags/v1.3.0', { headers: { 'Accept': 'application/vnd.github+json' } })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if (!d || !d.assets) return;
+        for (var i = 0; i < d.assets.length; i++) {
+          var a = d.assets[i];
+          if (a.name === 'cv-studio.apk' && typeof a.download_count === 'number') {
+            paint(a.download_count);
+            try { localStorage.setItem(KEY, JSON.stringify({ n: a.download_count, t: Date.now() })); } catch(e){}
+            break;
+          }
+        }
+      })
+      .catch(function(){});
+  }
+  document.querySelectorAll('[data-apk]').forEach(function(a){
+    a.addEventListener('click', function(){
+      var cur = parseInt((el.textContent || '0').replace(/[^0-9]/g, ''), 10) || BASE;
+      el.textContent = fmt(cur + 1);
+    });
+  });
 })();
 </script>
 </body>
