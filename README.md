@@ -8,6 +8,8 @@ A professional **bilingual (Arabic / English)**, installable **PWA** CV builder 
 generates **10 distinct ATS-compatible PDF versions** of your CV — downloadable
 individually or **all at once with one click**.
 
+**الموقع:** <https://assmmsto.github.io/CV/> · **التحميل:** <https://assmmsto.github.io/CV/download/> · **آخر إصدار:** [v1.3.0](https://github.com/assmmsto/CV/releases/latest)
+
 ---
 
 ## ✨ المزايا | Features
@@ -116,7 +118,7 @@ JSZip · Playwright-core (Chromium) · bun — مع PWA كامل (manifest + ser
 | `docs/index.html` | صفحة الهبوط العربية: المزايا والقوالب العشرة والأسئلة الشائعة (GitHub Pages) |
 | `docs/download/index.html` | صفحة التحميل: خطوات التثبيت، حل المشاكل، والتحقق من بصمة SHA-256 |
 | `docs/img/` | صور الصفحات: لقطات حقيقية للقوالب العشرة (WebP) وصورة المشاركة og.png |
-| `docs/cv-studio.apk` | حزمة التطبيق الموقّعة (com.cvstudio.app v1.0.0) |
+| `docs/cv-studio.apk` | حزمة التطبيق الموقّعة (com.cvstudio.app 1.3.0 — versionCode 7) |
 |  `download/cv-studio-release.keystore` | مفتاح التوقيع (كلمة السر مخزنة لديك في مكان آمن — لا تنشرها أبداً) |
 
 **بناء APK من الصفر**:
