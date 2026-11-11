@@ -857,38 +857,56 @@
 </script>
 
 <script>
-/* عدّاد التحميلات — 1,370 تحميلًا سابقًا + عدد تنزيلات ملف الإصدار على GitHub */
+/* عدّاد التحميلات — 1,370 تحميلًا سابقًا + العدّاد الحيّ.
+   مصدران: عدّاد فوري (abacus) واحتياطي (تنزيلات ملف الإصدار على GitHub).
+   لا يُرسل أي شيء عن الزائر: زيادة رقمية واحدة فقط، بلا كوكيز ولا معرّفات. */
 (function(){
-  var BASE = 1370, KEY = 'cv-dl-count-v1', TTL = 30 * 60 * 1000;
+  var BASE = 1370;
+  var KEY = 'cv-dl-v3', TTL = 30 * 60 * 1000;
+  var NS = 'assmmsto', SLUG = 'cv-studio-dl';
   var el = document.getElementById('dl-num');
   if (!el) return;
+
+  var state = { a: 0, g: 0, t: 0 };
+  try { var c = JSON.parse(localStorage.getItem(KEY) || 'null'); if (c) state = c; } catch(e){}
+
   function fmt(n){ return n.toLocaleString('en-US'); }
-  function paint(n){ el.textContent = fmt(BASE + n); }
-  paint(0);
-  var cached = null;
-  try { cached = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){}
-  if (cached && typeof cached.n === 'number' && (Date.now() - cached.t) < TTL) {
-    paint(cached.n);
-  } else {
-    fetch('https://api.github.com/repos/assmmsto/CV/releases/tags/v1.3.0', { headers: { 'Accept': 'application/vnd.github+json' } })
-      .then(function(r){ return r.ok ? r.json() : null; })
-      .then(function(d){
-        if (!d || !d.assets) return;
-        for (var i = 0; i < d.assets.length; i++) {
-          var a = d.assets[i];
-          if (a.name === 'cv-studio.apk' && typeof a.download_count === 'number') {
-            paint(a.download_count);
-            try { localStorage.setItem(KEY, JSON.stringify({ n: a.download_count, t: Date.now() })); } catch(e){}
-            break;
-          }
-        }
-      })
-      .catch(function(){});
+  function paint(){ el.textContent = fmt(BASE + Math.max(state.a || 0, state.g || 0)); }
+  function save(){ try { state.t = Date.now(); localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+  paint();
+
+  function getJson(url){
+    return fetch(url, { cache: 'no-store' }).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; });
   }
-  document.querySelectorAll('[data-apk]').forEach(function(a){
-    a.addEventListener('click', function(){
-      var cur = parseInt((el.textContent || '0').replace(/[^0-9]/g, ''), 10) || BASE;
-      el.textContent = fmt(cur + 1);
+
+  function refreshAbacus(){
+    return getJson('https://abacus.jasoncameron.dev/get/' + NS + '/' + SLUG).then(function(d){
+      if (d && typeof d.value === 'number' && d.value >= (state.a || 0)) { state.a = d.value; save(); paint(); }
+    });
+  }
+
+  function refreshGithub(){
+    return getJson('https://api.github.com/repos/assmmsto/CV/releases/tags/v1.3.0').then(function(d){
+      if (!d || !d.assets) return;
+      for (var i = 0; i < d.assets.length; i++) {
+        var a = d.assets[i];
+        if (a.name === 'cv-studio.apk' && typeof a.download_count === 'number' && a.download_count >= (state.g || 0)) {
+          state.g = a.download_count; save(); paint(); break;
+        }
+      }
+    });
+  }
+
+  if ((Date.now() - (state.t || 0)) > TTL) { refreshAbacus(); refreshGithub(); }
+  else { refreshGithub(); }
+
+  document.querySelectorAll('[data-apk]').forEach(function(link){
+    link.addEventListener('click', function(){
+      // زيادة فورية على الشاشة، ثم تأكيد من العدّاد الحيّ
+      state.a = (state.a || 0) + 1; paint();
+      getJson('https://abacus.jasoncameron.dev/hit/' + NS + '/' + SLUG).then(function(d){
+        if (d && typeof d.value === 'number') { state.a = d.value; save(); paint(); }
+      });
     });
   });
 })();
